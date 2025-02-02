@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import ClientSerializer, TicketSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import isOwnerReadOnlyOrisAdmin, IsAdmin
+from .permissions import IsOwnerReadOnlyOrisAdmin, IsOwnerOrAdmin, IsAdmin
 from .models import PaymentTicket, Client
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListCreateAPIView
@@ -13,6 +13,28 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.utils import timezone
 
+
+def updateExistingPasses(client: Client) -> None:
+    client_tickets_in_use = PaymentTicket.objects.filter(owner=client, is_expired=False).order_by('-expire_time')
+    for ticket in client_tickets_in_use:
+        if timezone.now().date() > ticket.expire_time:
+            ticket.is_expired = True
+            ticket.save()
+        elif ticket.amount_of_uses_LEFT == 0:
+            ticket.is_expired = True
+            ticket.save()
+
+
+def checkForExistingPasses(client: Client, type_of_service: str) -> bool:
+    client_tickets_in_use = PaymentTicket.objects.filter(owner=client,
+                                                         is_expired=False,
+                                                         type_of_service=type_of_service).order_by('-expire_time')
+    for ticket in client_tickets_in_use:
+        if ticket.amount_of_uses_LEFT > 0:
+            ticket.amount_of_uses_LEFT = ticket.amount_of_uses_LEFT - 1
+            ticket.save()
+            return ticket
+    return False
 
 class PaymentTicketList(ListCreateAPIView):
     queryset = PaymentTicket.objects.all()
@@ -29,7 +51,7 @@ class PaymentTicketList(ListCreateAPIView):
 class PaymentTicketDetail(ModelViewSet):
     queryset = PaymentTicket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = [IsAuthenticated, isOwnerReadOnlyOrisAdmin]
+    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
 
     def get_queryset(self):
         user = self.request.user
@@ -45,7 +67,22 @@ class ClientsViewList(ListCreateAPIView):
 class ClientsViewDetail(ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [IsAuthenticated, isOwnerReadOnlyOrisAdmin]
+    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+
+    def partial_update(self, request, *args, **kwargs):
+        type_of_service = request.data.get("type_of_service")
+        client = self.get_object()
+
+        updateExistingPasses(client)
+
+        available_passes = checkForExistingPasses(client, type_of_service)
+        if available_passes:
+            return Response({
+                "Action": "Pass",
+                "Ticket_used": django.core.serializers.serialize('json', [available_passes])
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
 
 class AdminAddPassesToClient(ModelViewSet):
@@ -78,36 +115,19 @@ class AdminTakeAPassForClient(ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def partial_update(self, request, *args, **kwargs):
-        type_of_service = self.request.data.get("type_of_service")
+        type_of_service = request.data.get("type_of_service")
         client = self.get_object()
 
-        self.updateExistingPasses(client)
+        updateExistingPasses(client)
 
-        available_passes = self.checkForExistingPasses(client, type_of_service)
+        available_passes = checkForExistingPasses(client, type_of_service)
         if available_passes:
-            return Response({"Action": "OK",
-                             "Ticket_used": django.core.serializers.serialize('json', [available_passes])
-                             })
+            return Response({
+                "Action": "OK",
+                "Ticket_used": django.core.serializers.serialize('json', [available_passes])
+            }, status=status.HTTP_200_OK)
         else:
-            return Response({"Action": "No passes Left"})
+            return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
-    def checkForExistingPasses(self, client: Client, type_of_service: str) -> bool:
-        client_tickets_in_use = PaymentTicket.objects.filter(owner=client,
-                                                             is_expired=False,
-                                                             type_of_service=type_of_service).order_by('-expire_time')
-        for ticket in client_tickets_in_use:
-            if ticket.amount_of_uses_LEFT > 0:
-                ticket.amount_of_uses_LEFT = ticket.amount_of_uses_LEFT - 1
-                ticket.save()
-                return ticket
-        return False
 
-    def updateExistingPasses(self, client: Client) -> None:
-        client_tickets_in_use = PaymentTicket.objects.filter(owner=client, is_expired=False).order_by('-expire_time')
-        for ticket in client_tickets_in_use:
-            if timezone.now().date() > ticket.expire_time:
-                ticket.is_expired = True
-                ticket.save()
-            elif ticket.amount_of_uses_LEFT == 0:
-                ticket.is_expired = True
-                ticket.save()
+

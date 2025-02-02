@@ -18,7 +18,7 @@ class Client(AbstractUser):
 class PaymentTicket(models.Model):
     type_of_service = models.CharField(
         max_length=30,
-        choices=[('classes', 'CLASSES'), ('free_climbing', 'FREE_CLIMBING')],
+        choices=[('classes', 'classes'), ('free_climbing', 'free_climbing')],
     )
     payment_day = models.DateField(default=timezone.now, editable=False)
 
