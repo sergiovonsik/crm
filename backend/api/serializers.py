@@ -1,24 +1,30 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import PaymentTicket, Client
+from rest_framework.serializers import models
+
 
 class TicketSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+
     class Meta:
         model = PaymentTicket
-        fields = '__all__'  # Correct way to reference all fields
-        extra_kwargs = {"owner": {"read_only": True}}  # Make 'belongs_to' read-only
+        fields = ['type_of_service', 'is_expired', 'amount_of_uses_LEFT', 'owner', 'expire_time']
+
+    def create(self, data):
+        print("validated_data:", data)
+        ticket = PaymentTicket.objects.create(**data)  # Use Client here
+        return ticket
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    tickets = TicketSerializer(many=True, read_only=True)  # Fetch related tickets
+    payment_ticket = TicketSerializer(many=True, read_only=True)  # Fetch related tickets
+
     class Meta:
         model = Client  # Use Client instead of User
-        fields = ["id", "username", "password",
-                  "classes_left", "free_climbing_left", 'tickets']
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ["id", "username", "password", 'payment_ticket']
+        # extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        print(validated_data)
-        # Create a Client object (not a User object)
         user = Client.objects.create_user(**validated_data)  # Use Client here
         return user

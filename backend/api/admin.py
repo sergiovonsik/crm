@@ -1,11 +1,20 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import Client, PaymentTicket
 
+
 # Register the Client model with a custom admin interface
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'classes_left', 'free_climbing_left')
-    search_fields = ('username', 'email', 'id')
+class PaymentTicketInline(admin.TabularInline):  # or use StackedInline for a different layout
+    model = PaymentTicket
+    extra = 1  # Number of empty forms to display for new objects
+    readonly_fields = ('payment_day', 'expire_time', 'is_expired')  # Make some fields read-only
+
+
+class CustomClientAdmin(UserAdmin):
+    inlines = [PaymentTicketInline]  # Attach the inline to ClientAdmin
+
+    list_display = ('username', 'email', 'is_staff', 'is_active')  # Customize list view
+    search_fields = ('username', 'email')
     ordering = ('id',)
 
 # Register the PaymentTicket model
@@ -15,3 +24,6 @@ class PaymentTicketAdmin(admin.ModelAdmin):
     list_filter = ('type_of_service',)
     search_fields = ('owner__username', 'type_of_service')
     ordering = ('payment_day',)
+
+
+admin.site.register(Client, CustomClientAdmin)
