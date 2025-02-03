@@ -67,7 +67,13 @@ class ClientsViewList(ListCreateAPIView):
 class ClientsViewDetail(ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
+
+    def list(self, request, *args, **kwargs):
+        user_profile = Client.objects.get(pk=request.user.pk)
+        serializer = self.get_serializer(user_profile)
+        return Response(serializer.data)
+
 
     def partial_update(self, request, *args, **kwargs):
         type_of_service = request.data.get("type_of_service")

@@ -9,7 +9,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTicket
-        fields = ['type_of_service', 'is_expired', 'amount_of_uses_LEFT', 'owner', 'expire_time']
+        fields = ['type_of_service', 'is_expired', 'amount_of_uses_LEFT', 'owner', 'payment_day', 'expire_time', 'id']
 
     def create(self, data):
         print("validated_data:", data)
