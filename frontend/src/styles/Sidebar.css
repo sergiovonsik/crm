@@ -81,11 +81,15 @@
 
 /* Adjust main content */
 .main-content {
+
+    height: 100vh;
     margin-left: 300px;
     padding: 20px;
     transition: margin-left 0.3s ease-in-out;
 }
 
 .sidebar.closed + .main-content {
+
+    height: 100vh;
     margin-left: 160px;
 }

@@ -7,8 +7,9 @@
   border-radius: 10px;
   border: 2px solid;
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: #222; /* Dark background */
   font-family: Arial, sans-serif;
+  color: #ddd; /* Light text for readability */
 }
 
 .ticket span {
@@ -17,17 +18,17 @@
 }
 
 .ticket strong {
-  color: #333;
+  color: #fff; /* White text for contrast */
 }
 
 .ticket.valid {
-  border-color: green;
-  background-color: #e6f9e6;
+  border-color: #27ae60; /* Green border */
+  background-color: #1e3d29; /* Dark green background */
 }
 
 .ticket.expired {
-  border-color: red;
-  background-color: #fde8e8;
+  border-color: #c0392b; /* Red border */
+  background-color: #3d1e1e; /* Dark red background */
 }
 
 .status {
@@ -38,9 +39,9 @@
 }
 
 .valid .status {
-  background-color: green;
+  background-color: #27ae60; /* Green status */
 }
 
 .expired .status {
-  background-color: red;
+  background-color: #c0392b; /* Red status */
 }
