@@ -12,7 +12,6 @@
 }
 
 .ticket span {
-  flex: 1;
   text-align: center;
   white-space: nowrap;
 }

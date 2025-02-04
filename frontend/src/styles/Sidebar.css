@@ -1,0 +1,91 @@
+/* Sidebar Styles */
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    background-color: #1a202c;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.sidebar.closed {
+    width: 60px; /* Collapsed width */
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.closed h2 {
+    opacity: 0; /* Hide title when collapsed */
+}
+
+/* Sidebar Navigation */
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+}
+
+.sidebar ul li a:hover {
+    background-color: #2d3748;
+}
+
+/* Toggle Button Inside Sidebar */
+.toggle-btn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 10px;
+    display: block;
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.closed .toggle-btn {
+    transform: rotate(180deg);
+}
+
+/* Sidebar Content Visibility */
+.sidebar-content {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.closed .sidebar-content {
+    opacity: 0;
+    pointer-events: none; /* Disable interactions when collapsed */
+}
+
+/* Adjust main content */
+.main-content {
+    margin-left: 300px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.sidebar.closed + .main-content {
+    margin-left: 160px;
+}

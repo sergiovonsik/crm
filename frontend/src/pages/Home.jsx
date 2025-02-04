@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import Ticket from "../components/Ticket";
+import Sidebar from "../components/Sidebar";
 import "../styles/Home.css";
 
 function Home() {
-    const [paymentTickets, setPaymentTickets] = useState([]); // ✅ Ensure it's always an array
-    const [content, setContent] = useState("");
-    const [title, setTitle] = useState("");
-
+    const [paymentTickets, setPaymentTickets] = useState([]);
+    const [user , setUser ] = useState({});
     useEffect(() => {
         getUserTickets();
     }, []);
@@ -16,7 +15,14 @@ function Home() {
         try {
             const res = await api.get(`/api/user/me/info`);
             const data = res.data;
-            setPaymentTickets(data.payment_ticket || []); // ✅ Ensure it's always an array
+            const userObjectData = {
+                'username': data.username,
+                'id': data.id,
+                'date_joined': data.date_joined,
+                'last_login': data.last_login,
+            };
+            setPaymentTickets(data.payment_ticket || []);
+            setUser(userObjectData)
             console.log(data.payment_ticket);
         } catch (err) {
             console.error("Error fetching tickets:", err);
@@ -26,18 +32,30 @@ function Home() {
 
     return (
         <div>
-            <h1>Profile:</h1>
-            <div>
-                <h2>Tickets:</h2>
-                {Array.isArray(paymentTickets) && paymentTickets.length > 0 ? (
-                    paymentTickets.map((ticket) => (
-                        <Ticket ticket={ticket} key={ticket.id} />
-                    ))
-                ) : (
-                    <p>No tickets found.</p>
-                )}
+            <Sidebar/>
+            <div className="main-content">
+                <div className="profile-container">
+                    <h2>User Profile</h2>
+                    <div className="profile-box">
+                        <p><strong>Username:</strong> {user.username}</p>
+                        <p><strong>ID:</strong> {user.id}</p>
+                        <p><strong>Date Joined:</strong> {user.date_joined}</p>
+                        <p><strong>Last Login:</strong> {user.last_login}</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h2>Tickets:</h2>
+                    {Array.isArray(paymentTickets) && paymentTickets.length > 0 ? (
+                        paymentTickets.map((ticket) => (
+                            <Ticket ticket={ticket} key={ticket.id}/>
+                        ))
+                    ) : (
+                        <p>No tickets found.</p>
+                    )}
+                </div>
+                <h2>Buy more passes</h2>
             </div>
-            <h2>Buy more passes</h2>
         </div>
     );
 }

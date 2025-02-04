@@ -22,7 +22,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client  # Use Client instead of User
-        fields = ["id", "username", "password", 'payment_ticket']
+        fields = ["id", "username", 'email', 'is_staff', 'last_login', 'date_joined', 'payment_ticket']
         # extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
