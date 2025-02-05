@@ -18,10 +18,13 @@ const Sidebar = () => {
           <nav>
             <ul>
               <li>
-                <Link to="/">{isOpen ? "Home" : "🏠"}</Link>
+                <Link to="/">{isOpen ? "Home" : ""}</Link>
               </li>
               <li>
-                <Link to="/logout">{isOpen ? "Logout" : "🚪"}</Link>
+                <Link to="/buy_passes">{isOpen ? "Buy" : ""}</Link>
+              </li>
+              <li>
+                <Link to="/logout">{isOpen ? "Logout" : " "}</Link>
               </li>
             </ul>
           </nav>

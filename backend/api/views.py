@@ -12,6 +12,7 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.utils import timezone
+import mercadopago
 
 
 def updateExistingPasses(client: Client) -> None:
@@ -25,7 +26,7 @@ def updateExistingPasses(client: Client) -> None:
             ticket.save()
 
 
-def checkForExistingPasses(client: Client, type_of_service: str) -> bool:
+def discountClientOnePass(client: Client, type_of_service: str) -> bool:
     client_tickets_in_use = PaymentTicket.objects.filter(owner=client,
                                                          is_expired=False,
                                                          type_of_service=type_of_service).order_by('-expire_time')
@@ -35,6 +36,7 @@ def checkForExistingPasses(client: Client, type_of_service: str) -> bool:
             ticket.save()
             return ticket
     return False
+
 
 class PaymentTicketList(ListCreateAPIView):
     queryset = PaymentTicket.objects.all()
@@ -74,14 +76,13 @@ class ClientsViewDetail(ModelViewSet):
         serializer = self.get_serializer(user_profile)
         return Response(serializer.data)
 
-
     def partial_update(self, request, *args, **kwargs):
         type_of_service = request.data.get("type_of_service")
         client = self.get_object()
 
         updateExistingPasses(client)
 
-        available_passes = checkForExistingPasses(client, type_of_service)
+        available_passes = discountClientOnePass(client, type_of_service)
         if available_passes:
             return Response({
                 "Action": "Pass",
@@ -97,7 +98,6 @@ class AdminAddPassesToClient(ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def create(self, request, *args, **kwargs):
-
         type_of_service = request.data.get("type_of_service")
         amount_of_uses = request.data.get("amount_of_uses")
         client_ticket_pk = request.data.get("client_ticket_pk")
@@ -126,7 +126,7 @@ class AdminTakeAPassForClient(ModelViewSet):
 
         updateExistingPasses(client)
 
-        available_passes = checkForExistingPasses(client, type_of_service)
+        available_passes = discountClientOnePass(client, type_of_service)
         if available_passes:
             return Response({
                 "Action": "OK",
@@ -136,4 +136,58 @@ class AdminTakeAPassForClient(ModelViewSet):
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
 
+class MercadoPagoTicket(ModelViewSet):
+    queryset = PaymentTicket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        """
+        ticket_data = dict(
+                           type_of_service=request.data.type_of_service,
+                           amount_of_uses=request.data.amount_of_uses,
+                           owner={str(request.user.pk)}
+                           )
+        """
+
+        ticket_data = dict(
+            type_of_service="free_climbing",
+            amount_of_uses="5",
+            owner={str(request.user.pk)}
+        )
+
+        preference_data = {
+            "items": [
+                {
+                    "title": f"Pass for: {ticket_data.get('type_of_service')}",
+                    "quantity": 1,
+                    "unit_price": 5,
+                }
+            ]
+        }
+
+        preference_response = sdk.preference().create(preference_data)
+
+
+
+        preference = preference_response.get("response")
+
+        init_point = preference.get("init_point")
+        id = preference.get("id")
+
+        print(preference)
+
+        if init_point is not None:
+            return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
+        return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        """
+        ticket_serializer = self.get_serializer(data=ticket_data)
+        if ticket_serializer.is_valid():
+            self.perform_create(ticket_serializer)
+            return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        """
