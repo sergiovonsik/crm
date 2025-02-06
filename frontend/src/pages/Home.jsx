@@ -21,7 +21,18 @@ function Home() {
                 'date_joined': data.date_joined,
                 'last_login': data.last_login,
             };
-            setPaymentTickets(data.payment_ticket || []);
+            let payment_ticket = data.payment_ticket
+
+            payment_ticket.sort((a, b) => {
+                // 1. Prioritize `expire: false` objects
+                if (a.is_expired !== b.is_expired) {
+                    return a.is_expired ? 1 : -1;  // `false` first, `true` last
+                }
+                // 2. If `expire` is the same, sort by `expire_date` (earlier date first)
+                return new Date(a.expire_time) - new Date(b.expire_time);
+            });
+
+            setPaymentTickets(payment_ticket || []);
             setUser(userObjectData)
             console.log(data.payment_ticket);
         } catch (err) {
@@ -54,7 +65,6 @@ function Home() {
                         <p>No tickets found.</p>
                     )}
                 </div>
-                <h2>Buy more passes</h2>
             </div>
         </div>
     );

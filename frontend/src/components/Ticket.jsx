@@ -6,9 +6,9 @@ const Ticket = ({ ticket }) => {
     id,
     type_of_service,
     amount_of_uses_LEFT,
+    payment_day,
     expire_time,
     is_expired,
-    payment_day,
   } = ticket;
 
   return (
@@ -16,8 +16,7 @@ const Ticket = ({ ticket }) => {
       <span><strong>ID:</strong> {id}</span>
       <span><strong>Service:</strong> {type_of_service}</span>
       <span><strong>Uses Left:</strong> {amount_of_uses_LEFT}</span>
-      <span><strong>Expires:</strong> {expire_time}</span>
-      <span><strong>Payment:</strong> {payment_day}</span>
+      <span><strong>Valid from:</strong> {payment_day} to {expire_time}</span>
       <span className="status">
         {is_expired ? "❌ Expired" : "✅ Valid"}
       </span>
