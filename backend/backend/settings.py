@@ -156,3 +156,4 @@ CORS_ALLOWS_CREDENTIALS = True
 
 AUTH_USER_MODEL = 'api.Client'
 
+BASEURL = "http://127.0.0.1:8000"

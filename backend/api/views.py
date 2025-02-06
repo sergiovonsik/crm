@@ -12,7 +12,12 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from django.utils import timezone
+from backend.settings import BASEURL
+
+from pprint import pprint
 import mercadopago
+
+
 
 
 def updateExistingPasses(client: Client) -> None:
@@ -144,50 +149,67 @@ class MercadoPagoTicket(ModelViewSet):
     def create(self, request, *args, **kwargs):
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
         """
-        ticket_data = dict(
-                           type_of_service=request.data.type_of_service,
-                           amount_of_uses=request.data.amount_of_uses,
-                           owner={str(request.user.pk)}
-                           )
+        Public_Key = 'APP_USR-d69ae28c-5036-428e-9440-6fc15a8cf194'
+        Access_Token = 'APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635' 
         """
 
         ticket_data = dict(
-            type_of_service="free_climbing",
-            amount_of_uses="5",
+            type_of_service=str(request.data.get("type_of_service")),
+            amount_of_uses=str(request.data.get("amount_of_uses")),
             owner={str(request.user.pk)}
         )
 
-        preference_data = {
-            "items": [
+        preference_data = dict(
+            items= [
                 {
                     "title": f"Pass for: {ticket_data.get('type_of_service')}",
-                    "quantity": 1,
-                    "unit_price": 5,
+                    "quantity": int(request.data.get("amount_of_uses")),
+                    "unit_price": int(request.data.get("price")),
                 }
-            ]
-        }
+            ],
 
+        )
         preference_response = sdk.preference().create(preference_data)
 
+        '''
+        redirect_urls= {
+                        'failure': '',
+                        'pending': '',
+                        'success': ''},
+        notification_url=f"http://127.0.0.1:8000/api/mercadopago/succes-hook/",
+        '''
 
 
         preference = preference_response.get("response")
 
         init_point = preference.get("init_point")
         id = preference.get("id")
-
-        print(preference)
-
         if init_point is not None:
             return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
 
 
-        """
+class MercadoPagoSuccesHook(ModelViewSet):
+    queryset = PaymentTicket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        type_of_service = request.data.get("type_of_service")
+        amount_of_uses = request.data.get("amount_of_uses")
+        owner = str(self.request.user.id)
+
+        ticket_data = dict(type_of_service=type_of_service,
+                           amount_of_uses=amount_of_uses,
+                           owner=owner)
+
         ticket_serializer = self.get_serializer(data=ticket_data)
+
         if ticket_serializer.is_valid():
             self.perform_create(ticket_serializer)
             return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
         return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        """
+
+
+

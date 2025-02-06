@@ -13,7 +13,7 @@ function Home() {
 
     const getUserTickets = async () => {
         try {
-            const res = await api.get(`/api/user/me/info`);
+            const res = await api.get(`/api/user/me/info/`);
             const data = res.data;
             const userObjectData = {
                 'username': data.username,
