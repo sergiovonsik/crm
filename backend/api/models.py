@@ -10,6 +10,7 @@ def get_default_date_30_days():
 
 
 class Client(AbstractUser):
+    google_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     def __str__(self):
         return f" pk:{self.pk}: {self.username}"

@@ -1,7 +1,41 @@
 import Form from "../components/Form"
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import api from "../api.js";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 function Login() {
-    return <Form route="http://127.0.0.1:8000/api/token/" method="login" />
+  const handleSubmit = async (googleCredential) => {
+    try {
+      // Send the raw JWT to the backend (not the decoded data)
+      const res = await api.post("http://127.0.0.1:8000/api/user/AuthGoogle/auth/",
+          {credential: googleCredential}
+      );
+
+      // Store tokens securely
+      localStorage.setItem(ACCESS_TOKEN, res.data.access_token);
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh_token);
+
+      console.log("Login Successful:", res.data);
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+      alert("Google login failed. Please try again.");
+    }
+  };
+    return (
+    <>
+        <Form route="http://127.0.0.1:8000/api/token/" method="login" />
+        <GoogleLogin
+            onSuccess={(credentialResponse) => {
+                {
+                    console.log(credentialResponse);
+                    console.log(jwtDecode(credentialResponse.credential));
+                    handleSubmit(credentialResponse.credential)
+                }
+            }}
+            onError={() => console.error("Login failed")}/>
+    </>
+    )
 }
 
 export default Login
