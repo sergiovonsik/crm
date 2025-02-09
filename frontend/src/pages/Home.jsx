@@ -48,10 +48,15 @@ function Home() {
                 <div className="profile-container">
                     <h2>User Profile</h2>
                     <div className="profile-box">
-                        <p><strong>Username:</strong> {user.username}</p>
-                        <p><strong>ID:</strong> {user.id}</p>
-                        <p><strong>Date Joined:</strong> {user.date_joined}</p>
-                        <p><strong>Last Login:</strong> {user.last_login}</p>
+                        <p><strong>Username:</strong>
+                            {user.username}
+                        </p>
+                        <p><strong>ID:</strong>
+                            {user.id}
+                        </p>
+                        <p><strong>Date Joined:</strong>
+                            {new Date(user.date_joined).toLocaleDateString("en-GB")}
+                        </p>
                     </div>
                 </div>
 

@@ -1,17 +1,44 @@
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { useNavigate } from "react-router-dom";
 
-function GoogleLoginButton({onLoginSuccess}) {
+
+
+function GoogleLoginButton() {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (googleCredential) => {
+    try {
+
+      const res = await axios.post("http://127.0.0.1:8000/api/user/AuthGoogle/auth/",
+          {credential: googleCredential}
+      );
+
+      // Store tokens securely
+      localStorage.setItem(ACCESS_TOKEN, res.data.access_token);
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh_token);
+
+      console.log("Login Successful:", res.data);
+      navigate("/")
+
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+      alert("Google login failed. Please try again.");
+    }
+  };
+
   return (
       <GoogleLogin
           onSuccess={(credentialResponse) => {
-            console.log("Google token:", credentialResponse.credential);
-            console.log("credentialResponse", credentialResponse);
-            onLoginSuccess(credentialResponse.credential);
+            {
+              console.log(credentialResponse.credential);
+              console.log(jwtDecode(credentialResponse.credential));
+              handleSubmit(credentialResponse.credential)
+            }
           }}
-          onError={() => {
-            console.log("Google Login Failed");
-          }}
-      />
+          onError={() => console.error("Login failed")}/>
   );
 };
 
