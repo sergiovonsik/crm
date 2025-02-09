@@ -31,6 +31,7 @@ GOOGLE_CLIENT_ID = SOCIAL_AUTH_GOOGLE_CLIENT_ID
 class GoogleAuthView(APIView):
     permission_classes = [AllowAny]
 
+
     def post(self, request):
         token = request.data.get("credential")
         print(f"data: {request.data}")

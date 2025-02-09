@@ -1,14 +1,14 @@
 import Form from "../components/Form"
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import api from "../api.js";
+import axios from 'axios';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 function Login() {
   const handleSubmit = async (googleCredential) => {
     try {
-      // Send the raw JWT to the backend (not the decoded data)
-      const res = await api.post("http://127.0.0.1:8000/api/user/AuthGoogle/auth/",
+      
+      const res = await axios.post("http://127.0.0.1:8000/api/user/AuthGoogle/auth/",
           {credential: googleCredential}
       );
 
@@ -28,7 +28,7 @@ function Login() {
         <GoogleLogin
             onSuccess={(credentialResponse) => {
                 {
-                    console.log(credentialResponse);
+                    console.log(credentialResponse.credential);
                     console.log(jwtDecode(credentialResponse.credential));
                     handleSubmit(credentialResponse.credential)
                 }
