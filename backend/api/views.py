@@ -9,7 +9,7 @@ import django.core.serializers
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .serializers import ClientSerializer, TicketSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import IsOwnerReadOnlyOrisAdmin, IsOwnerOrAdmin, IsAdmin
+from .permissions import *
 from .models import PaymentTicket, Client
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.generics import ListCreateAPIView
@@ -123,7 +123,9 @@ class PaymentTicketDetail(ModelViewSet):
 class ClientsViewList(ListCreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [AllowAny, IsAdmin]
+    permission_classes = [AllowAny, AdminGetAnyPost]
+
+
 
 
 class ClientsViewDetail(ModelViewSet):

@@ -7,6 +7,15 @@ class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_staff
 
+
+class AdminGetAnyPost(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method == 'GET':
+            return request.user.is_staff
+        if request.method == 'POST':
+            return True
+
+
 class IsOwnerReadOnlyOrisAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method == 'GET':

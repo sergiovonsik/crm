@@ -34,3 +34,11 @@
 .form-button:hover {
   background-color: #0056b3;
 }
+
+.reister-button {
+  color: #ffffff;
+}
+
+reister-button:hover {
+  color: #0056b3;
+}

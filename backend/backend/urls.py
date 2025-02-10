@@ -6,7 +6,7 @@ from api.views import GoogleAuthView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    #path("api/user/register/", GoogleAuthViewSet.as_view({'post':'create'}), name="register"),
+    path("api/user/register/", ClientsViewList.as_view(), name="register"),
     path("api/user/AuthGoogle/auth/", GoogleAuthView.as_view(), name="login-register-google"),
     path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
