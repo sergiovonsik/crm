@@ -1,7 +1,8 @@
 import Form from "../components/Form"
-
+import {apiUrl} from "../api"
 function Register() {
-    return <Form route="http://127.0.0.1:8000/api/user/register/" method="register" />
+    const route =`${apiUrl}/api/user/register/`;
+    return <Form route={route} method="register" />
 }
 
 export default Register

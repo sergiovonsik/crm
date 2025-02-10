@@ -19,6 +19,7 @@ function Form({ route, method }) {
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
+        console.log(route);
 
         try {
             const res = await api.post(route, { username, password, email});

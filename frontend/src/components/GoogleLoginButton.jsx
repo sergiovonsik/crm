@@ -3,16 +3,18 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useNavigate } from "react-router-dom";
-
+import {apiUrl} from "../api"
 
 
 function GoogleLoginButton() {
   const navigate = useNavigate();
+  const route =`${apiUrl}/api/user/AuthGoogle/auth/`;
+
 
   const handleSubmit = async (googleCredential) => {
     try {
-
-      const res = await axios.post("http://127.0.0.1:8000/api/user/AuthGoogle/auth/",
+      console.log(route);
+      const res = await axios.post(route,
           {credential: googleCredential}
       );
 

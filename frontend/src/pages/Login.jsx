@@ -1,10 +1,11 @@
 import Form from "../components/Form"
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"
+import {apiUrl} from "../api";
 
 function Login() {
   const navigate = useNavigate();
-
+  const route = `${apiUrl}/api/token/`;
   return (
       <>
         <div className="container">
@@ -12,7 +13,7 @@ function Login() {
             Don’t have an account? Register
           </p>
           <div>
-            <Form route="http://127.0.0.1:8000/api/token/" method="login"/>
+            <Form route={route} method="login"/>
           </div>
         </div>
       </>
