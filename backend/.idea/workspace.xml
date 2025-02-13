@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b8e32a6-0366-407b-a62b-bdd1aa5761a9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,14 +32,12 @@
     &quot;assignee&quot;: &quot;sergiovonsik&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">
-    <option name="selectedUrlAndAccountId">
-      <UrlAndAccount>
-        <option name="accountId" value="698657d5-1b86-4eb4-8a05-542eed9b2912" />
-        <option name="url" value="https://github.com/sergiovonsik/crm.git" />
-      </UrlAndAccount>
-    </option>
-  </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/sergiovonsik/crm.git",
+    "accountId": "698657d5-1b86-4eb4-8a05-542eed9b2912"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -273,7 +272,7 @@
       <workItem from="1738781209692" duration="415000" />
       <workItem from="1738781758652" duration="6944000" />
       <workItem from="1738936017647" duration="6831000" />
-      <workItem from="1739400613691" duration="14464000" />
+      <workItem from="1739400613691" duration="16931000" />
     </task>
     <servers />
   </component>

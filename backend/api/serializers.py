@@ -22,8 +22,12 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client  # Use Client instead of User
-        fields = ["id", "username", 'email', 'is_staff', 'date_joined', 'payment_ticket']
-        # extra_kwargs = {"password": {"write_only": True}}
+        fields = ["id", "username", 'password', 'email', 'is_staff', 'date_joined', 'payment_ticket']
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "is_staff": {"read_only": True},
+            "date_joined": {"read_only": True}
+        }
 
     def create(self, validated_data):
         user = Client.objects.create_user(**validated_data)  # Use Client here
