@@ -225,9 +225,13 @@ class MercadoPagoTicket(ModelViewSet):
             ],
             auto_return= "approved",
             redirect_urls={
-                'failure': 'https://www.google.com.ar/',
+                'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
-                'success': f'https://crm-frontend-ywqp.onrender.com'},
+                'success': f'https://crm-frontend-ywqp.onrender.com/'},
+            back_urls={
+                'failure': 'https://crm-frontend-ywqp.onrender.com/',
+                'pending': 'https://www.yahoo.com.ar/',
+                'success': f'https://crm-frontend-ywqp.onrender.com/'},
             notification_url=f'https://crm-frontend-ywqp.onrender.com/api/mercadopago/succes-hook/',
 
         )
