@@ -13,6 +13,7 @@ function GoogleLoginButton() {
 
   const handleSubmit = async (googleCredential) => {
     try {
+      console.log('googleCredential route = '+route);
       console.log(route);
       const res = await axios.post(route,
           {credential: googleCredential}
@@ -35,13 +36,15 @@ function GoogleLoginButton() {
       <GoogleLogin
           onSuccess={(credentialResponse) => {
             {
+              console.log('credentialResponse.credential');
               console.log(credentialResponse.credential);
               console.log(jwtDecode(credentialResponse.credential));
+              console.log('calling handleSubmit...')
               handleSubmit(credentialResponse.credential)
             }
           }}
           onError={() => console.error("Login failed")}/>
   );
-};
+}
 
 export default GoogleLoginButton;

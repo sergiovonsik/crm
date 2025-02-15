@@ -1,8 +1,17 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
-//const apiUrl = "/choreo-apis/awbo/backend/rest-api-be2/v1.0";
-export const apiUrl = "http://127.0.0.1:8000";
+//export const apiUrl = "http://127.0.0.1:8000";
+
+export let apiUrl
+if (import.meta.env.PROD) {
+    apiUrl = import.meta.env.VITE_API_BASE_URL_DEPLOY;
+    console.log('Running in production mode in apiUrl=' + import.meta.env.VITE_API_BASE_URL_DEPLOY);
+} else {
+    // Development-specific code
+    apiUrl = import.meta.env.VITE_API_BASE_URL_LOCAL;
+    console.log('Running in development mode in apiUrl='+ import.meta.env.VITE_API_BASE_URL_LOCAL);
+}
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,

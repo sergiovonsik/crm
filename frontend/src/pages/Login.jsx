@@ -1,11 +1,10 @@
 import Form from "../components/Form"
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"
-import {apiUrl} from "../api";
 
 function Login() {
   const navigate = useNavigate();
-  const route = `${apiUrl}/api/token/`;
+  const route = `/api/token/`;
   return (
       <>
         <div className="container">
