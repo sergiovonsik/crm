@@ -223,7 +223,7 @@ class MercadoPagoTicket(ModelViewSet):
                     "unit_price": int(request.data.get("price")),
                 }
             ],
-            auto_return= "approved",
+            auto_return="approved",
             redirect_urls={
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
@@ -284,8 +284,6 @@ class MercadoPagoTicket(ModelViewSet):
         
         '''
 
-
-
         preference_response = sdk.preference().create(preference_data)
 
         preference = preference_response.get("response")
@@ -299,13 +297,10 @@ class MercadoPagoTicket(ModelViewSet):
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
 
-class MercadoPagoSuccesHook(ModelViewSet):
-    queryset = PaymentTicket.objects.all()
-    serializer_class = TicketSerializer
+class MercadoPagoHook(APIView):
     permission_classes = [AllowAny]
 
-
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         pprint(request.query_params)
         pprint(request.data)
         pprint(self.request.data)
@@ -321,9 +316,9 @@ class MercadoPagoSuccesHook(ModelViewSet):
                            amount_of_uses=amount_of_uses,
                            owner=owner)
 
-        ticket_serializer = self.get_serializer(data=ticket_data)
+        ticket_serializer = TicketSerializer.validate(**ticket_data)
 
         if ticket_serializer.is_valid():
-            self.perform_create(ticket_serializer)
+            PaymentTicket.objects.create(ticket_serializer)
             return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
         return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
