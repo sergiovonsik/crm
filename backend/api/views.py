@@ -297,7 +297,7 @@ class MercadoPagoTicket(ModelViewSet):
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
 
-class MercadoPagoHook(APIView):
+class MercadoPagoSuccesHook(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):

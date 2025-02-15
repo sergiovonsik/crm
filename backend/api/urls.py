@@ -23,5 +23,5 @@ urlpatterns = [
          name="user-add-passes"),
     path("mercadopago/pay/", MercadoPagoTicket.as_view({'post': 'create'}),
          name="mercadopago"),
-    path("mercadopago/webhook/", MercadoPagoSuccesHook.as_view({'post': 'create'}), name='webhook'),
+    path("mercadopago/webhook/", MercadoPagoSuccesHook.as_view(), name='webhook'),
 ]
