@@ -304,8 +304,14 @@ class MercadoPagoSuccesHook(ModelViewSet):
     serializer_class = TicketSerializer
     permission_classes = [AllowAny]
 
+
     def create(self, request, *args, **kwargs):
+        pprint(request.query_params)
         pprint(request.data)
+        pprint(self.request.data)
+
+        payment_id = request.query_params.get("id")
+        topic = request.query_params.get("topic")
 
         type_of_service = request.data.get("type_of_service")
         amount_of_uses = request.data.get("amount_of_uses")
