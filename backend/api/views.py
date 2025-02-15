@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth import get_user_model
+import os
 import django.core.serializers
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .serializers import ClientSerializer, TicketSerializer
@@ -22,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+from pprint import pprint
 
 User = get_user_model()
 
@@ -30,7 +32,6 @@ GOOGLE_CLIENT_ID = SOCIAL_AUTH_GOOGLE_CLIENT_ID
 
 class GoogleAuthView(APIView):
     permission_classes = [AllowAny]
-
 
     def post(self, request):
         token = request.data.get("credential")
@@ -124,8 +125,6 @@ class ClientsViewList(ListCreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [AllowAny, AdminGetAnyPost]
-
-
 
 
 class ClientsViewDetail(ModelViewSet):
@@ -224,17 +223,14 @@ class MercadoPagoTicket(ModelViewSet):
                     "unit_price": int(request.data.get("price")),
                 }
             ],
+            redirect_urls={
+                'failure': 'https://www.google.com.ar/',
+                'pending': 'https://www.yahoo.com.ar/',
+                'success': f'{str(os.environ.get("FRONT_END_URL"))}'},
+            notification_url=f'{str(os.environ.get("FRONT_END_URL"))}/api/mercadopago/succes-hook/',
 
         )
         preference_response = sdk.preference().create(preference_data)
-
-        '''
-        redirect_urls= {
-                        'failure': '',
-                        'pending': '',
-                        'success': ''},
-        notification_url=f"http://127.0.0.1:8000/api/mercadopago/succes-hook/",
-        '''
 
         preference = preference_response.get("response")
 
@@ -251,6 +247,8 @@ class MercadoPagoSuccesHook(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        pprint(request.data)
+
         type_of_service = request.data.get("type_of_service")
         amount_of_uses = request.data.get("amount_of_uses")
         owner = str(self.request.user.id)
