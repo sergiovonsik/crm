@@ -232,7 +232,7 @@ class MercadoPagoTicket(ModelViewSet):
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
                 'success': f'https://crm-frontend-ywqp.onrender.com/'},
-            notification_url=f'https://crm-frontend-ywqp.onrender.com/api/mercadopago/succes-hook/',
+            notification_url=f'https://crm-udrl.onrender.com/api/mercadopago/succes-hook/',
 
         )
         '''
