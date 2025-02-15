@@ -286,6 +286,8 @@ class MercadoPagoTicket(ModelViewSet):
 
         preference = preference_response.get("response")
 
+        pprint(preference)
+
         init_point = preference.get("init_point")
         id = preference.get("id")
         if init_point is not None:
