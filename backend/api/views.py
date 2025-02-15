@@ -223,13 +223,65 @@ class MercadoPagoTicket(ModelViewSet):
                     "unit_price": int(request.data.get("price")),
                 }
             ],
+            auto_return= "approved",
             redirect_urls={
                 'failure': 'https://www.google.com.ar/',
                 'pending': 'https://www.yahoo.com.ar/',
-                'success': f'{str(os.environ.get("FRONT_END_URL"))}'},
-            notification_url=f'{str(os.environ.get("FRONT_END_URL"))}/api/mercadopago/succes-hook/',
+                'success': f'https://crm-frontend-ywqp.onrender.com'},
+            notification_url=f'https://crm-frontend-ywqp.onrender.com/api/mercadopago/succes-hook/',
 
         )
+        '''
+                preference_data = {
+          "items": [
+            {
+                "id": "item-ID-1234",
+                "title": "Meu produto",
+                "currency_id": "BRL",
+                "picture_url": "https://www.mercadopago.com/org-img/MP3/home/logomp3.gif",
+                "description": "Descrição do Item",
+                "category_id": "art",
+                "quantity": 1,
+                "unit_price": 75.76
+            }
+        ],
+        "payer": {
+            "name": "João",
+            "surname": "Silva",
+            "email": "user@email.com",
+            "phone": {
+                "area_code": "11",
+                "number": "4444-4444"
+            },
+            "identification": {
+                "type": "CPF",
+                "number": "19119119100"
+            },
+            "address": {
+                "street_name": "Street",
+                "street_number": 123,
+                "zip_code": "06233200"
+            }
+        },
+        "back_urls": {
+            "success": "https://www.success.com",
+            "failure": "http://www.failure.com",
+            "pending": "http://www.pending.com"
+        },
+        "auto_return": "approved",
+        false,
+        "notification_url": "https://www.your-site.com/ipn",
+        "statement_descriptor": "MEUNEGOCIO",
+        "external_reference": "Reference_1234",
+        "expires": True,
+        "expiration_date_from": "2016-02-01T12:00:00.000-04:00",
+        "expiration_date_to": "2016-02-28T12:00:00.000-04:00"
+        }
+        
+        '''
+
+
+
         preference_response = sdk.preference().create(preference_data)
 
         preference = preference_response.get("response")
@@ -244,7 +296,7 @@ class MercadoPagoTicket(ModelViewSet):
 class MercadoPagoSuccesHook(ModelViewSet):
     queryset = PaymentTicket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         pprint(request.data)
