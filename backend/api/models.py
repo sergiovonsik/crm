@@ -38,6 +38,17 @@ class PaymentTicket(models.Model):
 
     is_expired = models.BooleanField(default=False)
 
+    status = models.CharField(
+        max_length=30,
+        choices=[('expired', 'expired'), ('in_use', 'in_use'), ('unpaid', 'unpaid')],
+        default='unpaid',
+        editable=True,
+    )
+
+    price = models.IntegerField(default=0)
+
+    left_to_pay = models.IntegerField(default=0)
+
     def __str__(self):
         return (f"Ticket N~{self.pk}, {self.owner.username} \n"
                 f"Paid for {self.type_of_service} on {self.payment_day}\n"

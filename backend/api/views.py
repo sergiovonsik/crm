@@ -210,15 +210,11 @@ class MercadoPagoTicket(ModelViewSet):
         """
 
         ticket_data = dict(
-            type_of_service= str(request.data.get("type_of_service")),
-            amount_of_uses= str(request.data.get("amount_of_uses")),
-            owner= str(request.user.pk),
+            type_of_service=str(request.data.get("type_of_service")),
+            amount_of_uses=str(request.data.get("amount_of_uses")),
+            owner=str(request.user.pk),
             is_expired=True,
         )
-
-        ticket_serializer = self.get_serializer(data=ticket_data)
-        ticket_serializer.is_valid()
-        self.perform_create(ticket_serializer)
 
         preference_data = dict(
             items=[
@@ -297,7 +293,18 @@ class MercadoPagoTicket(ModelViewSet):
 
         init_point = preference.get("init_point")
         id = preference.get("id")
+
         if init_point is not None:
+            # create ticket instance
+            ticket_data["id"] = id
+            ticket_data["price"] = int(request.data.get("price"))
+            ticket_data["left_to_pay"] = int(request.data.get("price"))
+            ticket_data["status"] = "unpaid"
+
+            ticket_serializer = self.get_serializer(data=ticket_data)
+            ticket_serializer.is_valid()
+            self.perform_create(ticket_serializer)
+
             return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
@@ -314,6 +321,11 @@ class MercadoPagoSuccesHook(APIView):
         pprint('merchant Order')
         pprint(sdk.merchant_order().get(merchant_order_id).get("response"))
 
-        if True:
-            return Response( status=status.HTTP_201_CREATED)
-        #return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        order_data = sdk.merchant_order().get(merchant_order_id).get("response")
+        if order_data.get('order_status'):
+            ticket = PaymentTicket.objects.get(id=merchant_order_id)
+            ticket.left_to_pay -= order_data.get("paid_amount")
+            if ticket.left_to_pay == 0:
+                ticket.status = "in_use"
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_202_ACCEPTED)
