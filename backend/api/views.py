@@ -310,10 +310,9 @@ class MercadoPagoSuccesHook(APIView):
         pprint(request.data)
 
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        merchant_order_id = request.query_params.get("id")
         pprint('merchant Order')
-        pprint(sdk.merchant_order(request.query_params.get("id")))
-        pprint(sdk.merchant_order(request.query_params.get("id")).get("response"))
-        pprint(sdk.merchant_order(request.query_params.get("id")).get("response").items())
+        pprint(sdk.merchant_order().get(merchant_order_id).get("response"))
 
         if True:
             return Response( status=status.HTTP_201_CREATED)
