@@ -210,6 +210,7 @@ class MercadoPagoTicket(ModelViewSet):
         ticket_data = {
             "type_of_service": str(request.data.get("type_of_service")),
             "amount_of_uses": str(request.data.get("amount_of_uses")),
+            "amount_of_uses_LEFT": str(request.data.get("amount_of_uses")),
             "owner": str(request.user.pk),
             "is_expired": True,
             "price": int(request.data.get("price")),
@@ -282,15 +283,20 @@ class MercadoPagoSuccesHook(APIView):
         async def get_merchant_order():
             return await asyncio.to_thread(sdk.merchant_order().get, merchant_order_id)
 
+        async def get_ticket(order_id):
+            return await asyncio.to_thread(PaymentTicket.objects.get, order_id=order_id)
+
         order_data_raw = asyncio.run(get_merchant_order())
         order_data = order_data_raw.get("response")
         pprint('merchant Order')
         pprint(order_data)
+        pprint("order_status")
+        pprint(order_data.get('order_status'))
 
         if order_data.get('order_status') == 'paid':
             print("Ticket paid!")
             print("$: " + order_data.get("paid_amount"))
-            ticket = PaymentTicket.objects.get(order_id=merchant_order_id)
+            ticket = asyncio.run(get_ticket(merchant_order_id))
             ticket.left_to_pay = ticket.left_to_pay - int(order_data.get("paid_amount"))
             if ticket.left_to_pay == 0:
                 ticket.status = "in_use"
