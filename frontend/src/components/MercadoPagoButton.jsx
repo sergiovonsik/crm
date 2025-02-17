@@ -5,7 +5,7 @@ import api from "../api.js";
 import PropTypes from 'prop-types';
 
 
-function MercadoPagoButton({type_of_service, price}) {
+function MercadoPagoButton({type_of_service, amount_of_uses, price}) {
   const [init_point , setInit_point ] = useState(null);
   const [id , setId ] = useState(null);
   useEffect(() => {
@@ -16,6 +16,7 @@ function MercadoPagoButton({type_of_service, price}) {
     try {
       const response = await api.post(`/api/mercadopago/pay/`,
           {'type_of_service': type_of_service,
+                'amount_of_uses': amount_of_uses,
                 'price': price
           }
       );
@@ -45,6 +46,7 @@ function MercadoPagoButton({type_of_service, price}) {
 
 MercadoPagoButton.propTypes = {
   type_of_service: PropTypes.string.isRequired,
+  amount_of_uses: PropTypes.string.isRequired,
   price: PropTypes.string.isRequired,
 };
 
