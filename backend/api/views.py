@@ -277,15 +277,15 @@ class MercadoPagoSuccesHook(APIView):
         pprint(request.data)
 
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        merchant_order_id = request.query_params.get("id")
 
-        async def get_merchant_order():
-            return await asyncio.to_thread(request.query_params.get, "id")
+        async def get_merchant_order(): 
+            return await asyncio.to_thread(sdk.merchant_order().get, merchant_order_id)
 
-        merchant_order_id = asyncio.run(get_merchant_order())  # Espera la respuesta de MercadoPago
+        order_data_raw = asyncio.run(get_merchant_order())
+        order_data = order_data_raw.get("response")
         pprint('merchant Order')
-        pprint(sdk.merchant_order().get(merchant_order_id).get("response"))
-
-        order_data = sdk.merchant_order().get(merchant_order_id).get("response")
+        pprint(order_data)
 
         print("order_status " + order_data.get('order_status'))
         if order_data.get('order_status') == 'paid':
