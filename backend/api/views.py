@@ -296,7 +296,7 @@ class MercadoPagoTicket(ModelViewSet):
 
         if init_point is not None:
             # create ticket instance
-            ticket_data["order_id"] = id
+            ticket_data["order_id"] = int(id)
             ticket_data["price"] = int(request.data.get("price"))
             ticket_data["left_to_pay"] = int(request.data.get("price"))
             ticket_data["status"] = "unpaid"
