@@ -292,17 +292,23 @@ class MercadoPagoTicket(ModelViewSet):
         pprint(preference_response)
 
         init_point = preference.get("init_point")
-        id = preference.get("id")
+        id = preference.get("collector_id")
 
         if init_point is not None:
             # create ticket instance
+            print("Creating Ticket...")
             ticket_data["order_id"] = int(id)
             ticket_data["price"] = int(request.data.get("price"))
             ticket_data["left_to_pay"] = int(request.data.get("price"))
             ticket_data["status"] = "unpaid"
 
+            print("Serialize Ticket...")
             ticket_serializer = self.get_serializer(data=ticket_data)
+
+            print("Serialize Ticket is_valid...")
             ticket_serializer.is_valid()
+
+            print("Serialize perform_create...")
             self.perform_create(ticket_serializer)
 
             return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
