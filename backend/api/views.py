@@ -305,15 +305,20 @@ class MercadoPagoTicket(ModelViewSet):
             print("Serialize Ticket...")
             ticket_serializer = self.get_serializer(data=ticket_data)
 
-            print("Serialize Ticket is_valid...")
-            ticket_serializer.is_valid()
+            if ticket_serializer:
+                print("Serialize Ticket is_valid...")
+                ticket_serializer.is_valid()
 
-            print("Serialize perform_create...")
-            self.perform_create(ticket_serializer)
+                print("Serialize perform_create...")
+                self.perform_create(ticket_serializer)
 
-            print("Serialize WITH SUCCES...")
 
-            return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
+                print("Serialize WITH SUCCES...")
+
+                return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
+            else:
+                print(ticket_serializer.errors)  # Esto imprimirá los errores de validación
+                return Response(ticket_serializer.errors, status=400)
 
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
