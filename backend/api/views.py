@@ -309,7 +309,7 @@ class MercadoPagoTicket(ModelViewSet):
             ticket_serializer.is_valid()
 
             print("Serialize perform_create...")
-            PaymentTicket.objects.create(**ticket_data)
+            self.perform_create(ticket_serializer)
 
             print("Serialize WITH SUCCES...")
 
