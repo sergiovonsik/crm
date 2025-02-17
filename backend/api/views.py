@@ -212,22 +212,24 @@ class MercadoPagoTicket(ModelViewSet):
         ticket_data = dict(
             type_of_service=str(request.data.get("type_of_service")),
             amount_of_uses=str(request.data.get("amount_of_uses")),
-            owner={str(request.user.pk)}
+            owner={str(request.user.pk)},
+            is_expired=True,
         )
+
+        ticket_serializer = self.get_serializer(data=ticket_data)
+        newTicket = PaymentTicket.objects.create(**ticket_data)
+
 
         preference_data = dict(
             items=[
                 {
+                    "id": str(newTicket.pk),
                     "title": f"Pass for: {ticket_data.get('type_of_service')}",
-                    "quantity": int(request.data.get("amount_of_uses")),
+                    "quantity": 1,
                     "unit_price": int(request.data.get("price")),
                 }
             ],
             auto_return="approved",
-            redirect_urls={
-                'failure': 'https://crm-frontend-ywqp.onrender.com/',
-                'pending': 'https://www.yahoo.com.ar/',
-                'success': f'https://crm-frontend-ywqp.onrender.com/'},
             back_urls={
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
@@ -303,22 +305,10 @@ class MercadoPagoSuccesHook(APIView):
     def post(self, request, *args, **kwargs):
         pprint(request.query_params)
         pprint(request.data)
-        pprint(self.request.data)
 
-        payment_id = request.query_params.get("id")
-        topic = request.query_params.get("topic")
+        sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        pprint(sdk.merchant_order(request.query_params.get("id")))
 
-        type_of_service = request.data.get("type_of_service")
-        amount_of_uses = request.data.get("amount_of_uses")
-        owner = str(self.request.user.id)
-
-        ticket_data = dict(type_of_service=type_of_service,
-                           amount_of_uses=amount_of_uses,
-                           owner=owner)
-
-        ticket_serializer = TicketSerializer.validate(**ticket_data)
-
-        if ticket_serializer.is_valid():
-            PaymentTicket.objects.create(ticket_serializer)
-            return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if True:
+            return Response( status=status.HTTP_201_CREATED)
+        #return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
