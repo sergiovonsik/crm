@@ -205,7 +205,7 @@ class MercadoPagoTicket(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
 
         ticket_data = {
             "type_of_service": str(request.data.get("type_of_service")),
@@ -277,7 +277,7 @@ class MercadoPagoSuccesHook(APIView):
         pprint(request.query_params)
         pprint(request.data)
 
-        sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
         merchant_order_id = request.query_params.get("id")
 
         async def get_merchant_order():
@@ -294,9 +294,9 @@ class MercadoPagoSuccesHook(APIView):
         pprint(order_data.get('order_status'))
 
         if order_data.get('order_status') == 'paid':
+            ticket = asyncio.run(get_ticket(merchant_order_id))
             print("Ticket paid!")
             print("$: " + order_data.get("paid_amount"))
-            ticket = asyncio.run(get_ticket(merchant_order_id))
             ticket.left_to_pay = ticket.left_to_pay - int(order_data.get("paid_amount"))
             if ticket.left_to_pay == 0:
                 ticket.status = "in_use"
