@@ -311,7 +311,10 @@ class MercadoPagoTicket(ModelViewSet):
             print("Serialize perform_create...")
             self.perform_create(ticket_serializer)
 
+            print("Serialize WITH SUCCES...")
+
             return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
+        
         return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
 
 
