@@ -219,24 +219,22 @@ class MercadoPagoTicket(ModelViewSet):
         ticket_serializer = self.get_serializer(data=ticket_data)
         newTicket = PaymentTicket.objects.create(**ticket_data)
 
-
         preference_data = dict(
             items=[
                 {
-                    "id": str(newTicket.pk),
                     "title": f"Pass for: {ticket_data.get('type_of_service')}",
-                    "quantity": 1,
+                    "quantity": int(request.data.get("amount_of_uses")),
                     "unit_price": int(request.data.get("price")),
                 }
             ],
             auto_return="approved",
             redirect_urls={
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
-                'pending': 'https://crm-frontend-ywqp.onrender.com/',
+                'pending': 'https://www.yahoo.com.ar/',
                 'success': f'https://crm-frontend-ywqp.onrender.com/'},
             back_urls={
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
-                'pending': 'https://crm-frontend-ywqp.onrender.com/',
+                'pending': 'https://www.yahoo.com.ar/',
                 'success': f'https://crm-frontend-ywqp.onrender.com/'},
             notification_url=f'https://crm-udrl.onrender.com/api/mercadopago/succes-hook/',
 
