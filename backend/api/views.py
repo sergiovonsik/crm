@@ -1,29 +1,32 @@
-from rest_framework.views import APIView
-from rest_framework.viewsets import ViewSet
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from allauth.socialaccount.models import SocialAccount
-from django.contrib.auth import get_user_model
+# Standard library imports
 import os
-import django.core.serializers
-from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
-from .serializers import ClientSerializer, TicketSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import *
-from .models import PaymentTicket, Client
-from rest_framework.viewsets import ModelViewSet, ViewSet
-from rest_framework.generics import ListCreateAPIView
+import asyncio
+from pprint import pprint
+
+# Django imports
+from django.contrib.auth import get_user_model
 from django.utils import timezone
+import django.core.serializers
+from rest_framework import status
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+# Third-party library imports
 import mercadopago
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken
-from pprint import pprint
+from allauth.socialaccount.models import SocialAccount
+
+# Project-specific imports
+from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
+from .models import PaymentTicket, Client
+from .permissions import *
+from .serializers import ClientSerializer, TicketSerializer
+
 
 User = get_user_model()
 
@@ -87,7 +90,7 @@ def updateExistingPasses(client: Client) -> None:
             ticket.save()
 
 
-def discountClientOnePass(client: Client, type_of_service: str) -> bool:
+def discountClientOnePass(client: Client, type_of_service: str) -> PaymentTicket:
     client_tickets_in_use = PaymentTicket.objects.filter(owner=client,
                                                          is_expired=False,
                                                          type_of_service=type_of_service).order_by('-expire_time')
@@ -96,7 +99,7 @@ def discountClientOnePass(client: Client, type_of_service: str) -> bool:
             ticket.amount_of_uses_LEFT = ticket.amount_of_uses_LEFT - 1
             ticket.save()
             return ticket
-    return False
+    return None
 
 
 class PaymentTicketList(ListCreateAPIView):
@@ -196,7 +199,6 @@ class AdminTakeAPassForClient(ModelViewSet):
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
-
 class MercadoPagoTicket(ModelViewSet):
     queryset = PaymentTicket.objects.all()
     serializer_class = TicketSerializer
@@ -204,123 +206,67 @@ class MercadoPagoTicket(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
-        """
-        Public_Key = 'APP_USR-d69ae28c-5036-428e-9440-6fc15a8cf194'
-        Access_Token = 'APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635' 
-        """
 
-        ticket_data = dict(
-            type_of_service=str(request.data.get("type_of_service")),
-            amount_of_uses=str(request.data.get("amount_of_uses")),
-            owner=str(request.user.pk),
-            is_expired=True,
-        )
+        ticket_data = {
+            "type_of_service": str(request.data.get("type_of_service")),
+            "amount_of_uses": str(request.data.get("amount_of_uses")),
+            "owner": str(request.user.pk),
+            "is_expired": True,
+            "price": int(request.data.get("price")),
+            "left_to_pay": int(request.data.get("price")),
+            "status": "unpaid"
 
-        preference_data = dict(
-            items=[
+        }
+
+        preference_data = {
+            "items": [
                 {
                     "title": f"Pass for: {ticket_data.get('type_of_service')}",
                     "quantity": int(request.data.get("amount_of_uses")),
                     "unit_price": int(request.data.get("price")),
                 }
             ],
-            auto_return="approved",
-            redirect_urls={
+            "auto_return": "approved",
+            "redirect_urls": {
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
-                'success': f'https://crm-frontend-ywqp.onrender.com/'},
-            back_urls={
+                'success': 'https://crm-frontend-ywqp.onrender.com/'
+            },
+            "back_urls": {
                 'failure': 'https://crm-frontend-ywqp.onrender.com/',
                 'pending': 'https://www.yahoo.com.ar/',
-                'success': f'https://crm-frontend-ywqp.onrender.com/'},
-            notification_url=f'https://crm-udrl.onrender.com/api/mercadopago/succes-hook/',
-
-        )
-        '''
-                preference_data = {
-          "items": [
-            {
-                "id": "item-ID-1234",
-                "title": "Meu produto",
-                "currency_id": "BRL",
-                "picture_url": "https://www.mercadopago.com/org-img/MP3/home/logomp3.gif",
-                "description": "Descrição do Item",
-                "category_id": "art",
-                "quantity": 1,
-                "unit_price": 75.76
-            }
-        ],
-        "payer": {
-            "name": "João",
-            "surname": "Silva",
-            "email": "user@email.com",
-            "phone": {
-                "area_code": "11",
-                "number": "4444-4444"
+                'success': 'https://crm-frontend-ywqp.onrender.com/'
             },
-            "identification": {
-                "type": "CPF",
-                "number": "19119119100"
-            },
-            "address": {
-                "street_name": "Street",
-                "street_number": 123,
-                "zip_code": "06233200"
-            }
-        },
-        "back_urls": {
-            "success": "https://www.success.com",
-            "failure": "http://www.failure.com",
-            "pending": "http://www.pending.com"
-        },
-        "auto_return": "approved",
-        false,
-        "notification_url": "https://www.your-site.com/ipn",
-        "statement_descriptor": "MEUNEGOCIO",
-        "external_reference": "Reference_1234",
-        "expires": True,
-        "expiration_date_from": "2016-02-01T12:00:00.000-04:00",
-        "expiration_date_to": "2016-02-28T12:00:00.000-04:00"
+            "notification_url": 'https://crm-udrl.onrender.com/api/mercadopago/succes-hook/',
         }
-        
-        '''
 
-        preference_response = sdk.preference().create(preference_data)
+        async def get_preference():
+            return await asyncio.to_thread(sdk.preference().create, preference_data)
+
+        preference_response = asyncio.run(get_preference())  # Espera la respuesta de MercadoPago
 
         preference = preference_response.get("response")
 
-        pprint(preference_response)
+        pprint("preference")
+        pprint(preference)
+
+        if not preference:
+            return Response({"error": "No se pudo obtener la preferencia de pago"}, status=status.HTTP_400_BAD_REQUEST)
 
         init_point = preference.get("init_point")
-        id = preference.get("collector_id")
+        purchase_id = preference.get("id")
 
-        if init_point is not None:
-            # create ticket instance
-            print("Creating Ticket...")
-            ticket_data["order_id"] = int(id)
-            ticket_data["price"] = int(request.data.get("price"))
-            ticket_data["left_to_pay"] = int(request.data.get("price"))
-            ticket_data["status"] = "unpaid"
+        if init_point:
+            ticket_data.update({"order_id": purchase_id})
 
-            print("Serialize Ticket...")
             ticket_serializer = self.get_serializer(data=ticket_data)
-
-            if ticket_serializer:
-                print("Serialize Ticket is_valid...")
-                ticket_serializer.is_valid()
-
-                print("Serialize perform_create...")
+            if ticket_serializer.is_valid():
                 self.perform_create(ticket_serializer)
-
-
-                print("Serialize WITH SUCCES...")
-
-                return Response(dict(init_point=init_point, id=id), status=status.HTTP_201_CREATED)
+                return Response({"init_point": init_point, "id": purchase_id}, status=status.HTTP_201_CREATED)
             else:
-                print(ticket_serializer.errors)  # Esto imprimirá los errores de validación
-                return Response(ticket_serializer.errors, status=400)
+                return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(f"ERROR: {preference_response}", status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Error al procesar el pago"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MercadoPagoSuccesHook(APIView):
@@ -331,7 +277,11 @@ class MercadoPagoSuccesHook(APIView):
         pprint(request.data)
 
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
-        merchant_order_id = request.query_params.get("id")
+
+        async def get_merchant_order():
+            return await asyncio.to_thread(request.query_params.get, "id")
+
+        merchant_order_id = asyncio.run(get_merchant_order())  # Espera la respuesta de MercadoPago
         pprint('merchant Order')
         pprint(sdk.merchant_order().get(merchant_order_id).get("response"))
 
