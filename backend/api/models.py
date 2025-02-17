@@ -52,7 +52,7 @@ class PaymentTicket(models.Model):
     left_to_pay = models.IntegerField(default=0)
 
     def __str__(self):
-        return (f"Ticket N~{self.pk}, {self.owner.username} \n"
-                f"Paid for {self.type_of_service} on {self.payment_day}\n"
-                f"Amount of uses left: {self.amount_of_uses_LEFT}\n"
-                f"Ticket Expired Status: {self.is_expired}")
+        return (f"Ticket #{self.pk} | Owner: {self.owner.username} | Service: {self.type_of_service} | \n"
+                f"Payment Day: {self.payment_day} | Expires: {self.expire_time} | \n"
+                f"Uses Left: {self.amount_of_uses_LEFT} | Expired: {self.is_expired} | \n"
+                f"Status: {self.status} | Price: {self.price} | Left to Pay: {self.left_to_pay} \n")

@@ -76,7 +76,6 @@ function BuyPasses() {
                             </p>
                             <MercadoPagoButton
                                 type_of_service={activityType}
-                                amount_of_uses={passAmount}
                                 price={price.toString()}
                             />
                         </div>

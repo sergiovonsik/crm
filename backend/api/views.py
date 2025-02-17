@@ -279,7 +279,7 @@ class MercadoPagoSuccesHook(APIView):
         sdk = mercadopago.SDK("APP_USR-2423666870753668-020510-302e22177e1c6d6c30c3e8a9b20f1f35-2247408635")
         merchant_order_id = request.query_params.get("id")
 
-        async def get_merchant_order(): 
+        async def get_merchant_order():
             return await asyncio.to_thread(sdk.merchant_order().get, merchant_order_id)
 
         order_data_raw = asyncio.run(get_merchant_order())
@@ -287,11 +287,15 @@ class MercadoPagoSuccesHook(APIView):
         pprint('merchant Order')
         pprint(order_data)
 
-        print("order_status " + order_data.get('order_status'))
         if order_data.get('order_status') == 'paid':
+            print("Ticket paid!")
+            print("$: " + order_data.get("paid_amount"))
             ticket = PaymentTicket.objects.get(order_id=merchant_order_id)
-            ticket.left_to_pay -= int(order_data.get("paid_amount"))
+            ticket.left_to_pay = ticket.left_to_pay - int(order_data.get("paid_amount"))
             if ticket.left_to_pay == 0:
                 ticket.status = "in_use"
+                ticket.is_expired = False
+                ticket.save()
+            print("TICKET DATA", ticket)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_202_ACCEPTED)
