@@ -296,7 +296,7 @@ class MercadoPagoTicket(ModelViewSet):
 
         if init_point is not None:
             # create ticket instance
-            ticket_data["id"] = id
+            ticket_data["order_id"] = id
             ticket_data["price"] = int(request.data.get("price"))
             ticket_data["left_to_pay"] = int(request.data.get("price"))
             ticket_data["status"] = "unpaid"
@@ -322,9 +322,11 @@ class MercadoPagoSuccesHook(APIView):
         pprint(sdk.merchant_order().get(merchant_order_id).get("response"))
 
         order_data = sdk.merchant_order().get(merchant_order_id).get("response")
-        if order_data.get('order_status'):
-            ticket = PaymentTicket.objects.get(id=merchant_order_id)
-            ticket.left_to_pay -= order_data.get("paid_amount")
+
+        print("order_status " + order_data.get('order_status'))
+        if order_data.get('order_status') == 'paid':
+            ticket = PaymentTicket.objects.get(order_id=merchant_order_id)
+            ticket.left_to_pay -= int(order_data.get("paid_amount"))
             if ticket.left_to_pay == 0:
                 ticket.status = "in_use"
             return Response(status=status.HTTP_200_OK)
