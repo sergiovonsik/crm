@@ -274,34 +274,45 @@ class MercadoPagoSuccesHook(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        pprint(request.query_params)
         pprint(request.data)
 
         sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
-        merchant_order_id = request.query_params.get("id")
+        merchant_order_id = request.data.get("data", {}).get("id")
 
-        async def get_merchant_order():
-            return await asyncio.to_thread(sdk.merchant_order().get, merchant_order_id)
+        if not merchant_order_id:
+            return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
 
-        async def get_ticket(order_id):
-            return await asyncio.to_thread(PaymentTicket.objects.get, order_id=order_id)
+        def get_merchant_order():
+            return sdk.merchant_order().get(merchant_order_id)
 
-        order_data_raw = asyncio.run(get_merchant_order())
-        order_data = order_data_raw.get("response")
-        pprint('merchant Order')
+        def get_ticket(order_id):
+            return PaymentTicket.objects.get(order_id=order_id)
+
+        order_data_raw = get_merchant_order()
+        order_data = order_data_raw.get("response", {})
+
+        pprint('Merchant Order')
         pprint(order_data)
-        pprint("order_status")
-        pprint(order_data.get('order_status'))
 
         if order_data.get('order_status') == 'paid':
-            ticket = asyncio.run(get_ticket(merchant_order_id))
             print("Ticket paid!")
-            print("$: " + order_data.get("paid_amount"))
-            ticket.left_to_pay = ticket.left_to_pay - int(order_data.get("paid_amount"))
-            if ticket.left_to_pay == 0:
+            print("$: " + str(order_data.get("paid_amount")))
+
+            try:
+                ticket = get_ticket(merchant_order_id)
+            except PaymentTicket.DoesNotExist:
+                return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
+
+            if ticket.left_to_pay <= 0:
+                ticket.left_to_pay = 0
                 ticket.status = "in_use"
                 ticket.is_expired = False
-                ticket.save()
+
+            ticket.save()
+
             print("TICKET DATA", ticket)
             return Response(status=status.HTTP_200_OK)
+
         return Response(status=status.HTTP_202_ACCEPTED)
