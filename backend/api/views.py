@@ -222,7 +222,7 @@ class MercadoPagoTicket(ModelViewSet):
             "items": [
                 {
                     "title": f"Pass for: {ticket_data.get('type_of_service')}",
-                    "quantity": int(request.data.get("price")),
+                    "quantity": 1,
                     "unit_price": int(request.data.get("price")),
                 }
             ],
