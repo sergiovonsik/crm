@@ -210,14 +210,15 @@ class MercadoPagoTicket(ModelViewSet):
         """
 
         ticket_data = dict(
-            type_of_service=str(request.data.get("type_of_service")),
-            amount_of_uses=str(request.data.get("amount_of_uses")),
-            owner={str(request.user.pk)},
+            type_of_service= str(request.data.get("type_of_service")),
+            amount_of_uses= str(request.data.get("amount_of_uses")),
+            owner= str(request.user.pk),
             is_expired=True,
         )
 
         ticket_serializer = self.get_serializer(data=ticket_data)
-        newTicket = PaymentTicket.objects.create(**ticket_data)
+        ticket_serializer.is_valid()
+        self.perform_create(ticket_serializer)
 
         preference_data = dict(
             items=[
@@ -292,7 +293,7 @@ class MercadoPagoTicket(ModelViewSet):
 
         preference = preference_response.get("response")
 
-        pprint(preference)
+        pprint(preference_response)
 
         init_point = preference.get("init_point")
         id = preference.get("id")

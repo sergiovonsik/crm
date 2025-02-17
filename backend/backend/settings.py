@@ -144,7 +144,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-
 # Static files
 STATIC_URL = "static/"
 
@@ -159,17 +158,22 @@ CORS_ALLOWS_CREDENTIALS = True
 BASEURL = "http://127.0.0.1:8000"
 
 # Logging
+# settings.py
+
+import logging
+
+import os
+
 LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
     },
 }
