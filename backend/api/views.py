@@ -277,19 +277,14 @@ class MercadoPagoSuccesHook(APIView):
         pprint(request.data)
 
         sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
-        merchant_order_id = request.data.get("data", {}).get("id")
+        merchant_order_id = request.query_params.get("id")
 
         if not merchant_order_id:
             return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
 
-        def get_merchant_order():
-            return sdk.merchant_order().get(merchant_order_id)
-
-        def get_ticket(order_id):
-            return PaymentTicket.objects.get(order_id=order_id)
-
-        order_data_raw = get_merchant_order()
-        order_data = order_data_raw.get("response", {})
+        order_data_raw = sdk.merchant_order().get(merchant_order_id)
+        order_data = order_data_raw.get("response")
+        order_id_from_ticket = order_data.get("preference_id")
 
         pprint('Merchant Order')
         pprint(order_data)
@@ -299,11 +294,11 @@ class MercadoPagoSuccesHook(APIView):
             print("$: " + str(order_data.get("paid_amount")))
 
             try:
-                ticket = get_ticket(merchant_order_id)
+                ticket = PaymentTicket.objects.get(order_id=order_id_from_ticket)
             except PaymentTicket.DoesNotExist:
                 return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
+            ticket.left_to_pay -= int(order_data.get("paid_amount", 0))
 
             if ticket.left_to_pay <= 0:
                 ticket.left_to_pay = 0
