@@ -5,6 +5,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css"
 import LoadingIndicator from "./LoadingIndicator";
 import GoogleLoginButton from "../components/GoogleLoginButton"
+import PropTypes from "prop-types";
 
 
 function Form({ route, method }) {
@@ -71,5 +72,10 @@ function Form({ route, method }) {
         </form>
     );
 }
+
+Form.propTypes = {
+    route: PropTypes.string.isRequired,
+    method: PropTypes.string.isRequired,
+};
 
 export default Form

@@ -24,6 +24,9 @@ const Sidebar = () => {
                 <Link to="/buy_passes">{isOpen ? "Buy" : ""}</Link>
               </li>
               <li>
+                <Link to="/book_pass">{isOpen ? "Book" : ""}</Link>
+              </li>
+              <li>
                 <Link to="/logout">{isOpen ? "Logout" : " "}</Link>
               </li>
             </ul>

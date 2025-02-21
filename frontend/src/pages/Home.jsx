@@ -3,15 +3,32 @@ import api from "../api";
 import Ticket from "../components/Ticket";
 import Sidebar from "../components/Sidebar";
 import "../styles/Home.css";
+import Booking from "../components/Booking.jsx";
 
 function Home() {
     const [paymentTickets, setPaymentTickets] = useState([]);
+    const [ticketsFilter, setTicketsFilter] = useState(true);
+    const [bookingFiles, setBookingFiles] = useState([]);
+    const [bookingFilter, setBookingFilter] = useState(true);
     const [user , setUser ] = useState({});
     useEffect(() => {
-        getUserTickets();
+        getUserData();
     }, []);
 
-    const getUserTickets = async () => {
+    function showTicketsInUse(tickets = paymentTickets) {
+        return tickets
+            .filter(ticket => !ticket.is_expired)
+    }
+
+    function showPendingBookings(bookings = bookingFiles) {
+        const today = new Date()
+        ;return bookings
+            .filter(booking => new Date(booking.date) >= today)
+
+    }
+    
+    
+    const getUserData = async () => {
         try {
             const res = await api.get(`/api/user/me/info/`);
             const data = res.data;
@@ -21,20 +38,17 @@ function Home() {
                 'date_joined': data.date_joined,
                 'last_login': data.last_login,
             };
-            let payment_ticket = data.payment_ticket
 
-            payment_ticket.sort((a, b) => {
-                // 1. Prioritize `expire: false` objects
-                if (a.is_expired !== b.is_expired) {
-                    return a.is_expired ? 1 : -1;  // `false` first, `true` last
-                }
-                // 2. If `expire` is the same, sort by `expire_date` (earlier date first)
-                return new Date(a.expire_time) - new Date(b.expire_time);
-            });
+            let booking_tickets = data.bookings;
+            booking_tickets.sort((a, b) => new Date(a.date) - new Date(b.date));
+            setBookingFiles(booking_tickets || []);
+
+            let payment_ticket = data.payment_ticket;
+            payment_ticket.sort((a, b) => new Date(a.expire_time) - new Date(b.expire_time));
 
             setPaymentTickets(payment_ticket || []);
             setUser(userObjectData)
-            console.log(data.payment_ticket);
+            console.log(data);
         } catch (err) {
             console.error("Error fetching tickets:", err);
             alert("Failed to load tickets.");
@@ -61,13 +75,47 @@ function Home() {
                 </div>
 
                 <div>
-                    <h2>Tickets:</h2>
+                    <div className="inline-elements">
+                        <h2 className="titles">Tickets:</h2>
+                        
+                        <button className="filterButton" onClick={() => setTicketsFilter(!ticketsFilter)}>
+                             {ticketsFilter ? "Hide Expired" : "Show All"} Tickets
+                        </button>
+                    </div>
                     {Array.isArray(paymentTickets) && paymentTickets.length > 0 ? (
-                        paymentTickets.map((ticket) => (
-                            <Ticket ticket={ticket} key={ticket.id}/>
-                        ))
+                        ticketsFilter ? (
+                            showTicketsInUse().map((ticket) => (
+                                <Ticket ticket={ticket} key={ticket.id}/>
+                            ))
+                        ) : (
+                            paymentTickets.map((ticket) => (
+                                <Ticket ticket={ticket} key={ticket.id}/>
+                            ))
+                        )
                     ) : (
                         <p>No tickets found.</p>
+                    )}
+                </div>
+                <div>
+                    <div className="inline-elements">
+                        <h2 className="titles">Bookings:</h2>
+
+                        <button className="filterButton" onClick={() => setBookingFilter(!bookingFilter)}>
+                            {bookingFilter ? "Hide Expired" : "Show All"} Bookings
+                        </button>
+                    </div>
+                    {Array.isArray(bookingFiles) && bookingFiles.length > 0 ? (
+                        bookingFilter ? (
+                            showPendingBookings().map((booking) => (
+                                <Booking booking={booking} key={booking.id}/>
+                            ))
+                        ) : (
+                            bookingFiles.map((booking) => (
+                                <Booking booking={booking} key={booking.id}/>
+                            ))
+                        )
+                    ) : (
+                        <p>No bookings found.</p>
                     )}
                 </div>
             </div>
@@ -76,58 +124,4 @@ function Home() {
 }
 
 export default Home;
-
-
-/*
-
-<form onSubmit={createNote}>
-                <label htmlFor="title">Title:</label>
-                <br />
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    required
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                />
-                <label htmlFor="content">Content:</label>
-                <br />
-                <textarea
-                    id="content"
-                    name="content"
-                    required
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-                <br />
-                <input type="submit" value="Submit"></input>
-            </form>
-
-*/
-
-
-/*
-    const deleteNote = (id) => {
-        api
-            .delete(`/api/notes/delete/${id}/`)
-            .then((res) => {
-                if (res.status === 204) alert("Note deleted!");
-                else alert("Failed to delete note.");
-                getUserTickets();
-            })
-            .catch((error) => alert(error));
-    };
-
-    const createNote = (e) => {
-        e.preventDefault();
-        api
-            .post("/api/notes/", { content, title })
-            .then((res) => {
-                if (res.status === 201) alert("Note created!");
-                else alert("Failed to make note.");
-                getUserTickets();
-            })
-            .catch((err) => alert(err));
-    };
-*/
+ 

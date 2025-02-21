@@ -7,6 +7,7 @@ from pprint import pprint
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 import django.core.serializers
+from django.utils.dateparse import parse_date
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -94,6 +95,7 @@ def discountClientOnePass(client: Client, type_of_service: str) -> PaymentTicket
     client_tickets_in_use = PaymentTicket.objects.filter(owner=client,
                                                          is_expired=False,
                                                          type_of_service=type_of_service).order_by('-expire_time')
+    print(client_tickets_in_use)
     for ticket in client_tickets_in_use:
         if ticket.amount_of_uses_LEFT > 0:
             ticket.amount_of_uses_LEFT = ticket.amount_of_uses_LEFT - 1
@@ -138,7 +140,7 @@ class ClientsViewDetail(ModelViewSet):
     def list(self, request, *args, **kwargs):
         user_profile = Client.objects.get(pk=request.user.pk)
         serializer = self.get_serializer(user_profile)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
         type_of_service = request.data.get("type_of_service")
@@ -154,6 +156,47 @@ class ClientsViewDetail(ModelViewSet):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
+
+
+
+class UserBookingViewSet(ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request):
+        client = request.user
+        type_of_service = request.data.get("type_of_service")
+        date = parse_date(request.data.get("date"))
+        hour = request.data.get("hour")
+
+        pprint("request.data")
+        pprint(request.data)
+        pprint("USER")
+        pprint(client)
+
+        if not date:
+            return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update and Check if user has an available ticket
+        updateExistingPasses(client)
+
+        # Check if the user already booked this date
+        if Booking.objects.filter(client=client, date=date, type_of_service=type_of_service, hour=hour).exists():
+            return Response({"error": "Already booked for this date"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        ticket = discountClientOnePass(client, type_of_service)
+
+        print("TICKET"  )
+        print(ticket)
+        if not ticket:
+            return Response({"error": "No available tickets"}, status=status.HTTP_400_BAD_REQUEST)
+
+        print(f"Hour received: {hour}")  # Asegúrate de que no es None ni vacío
+
+        booking_instance = Booking.objects.create(client=client, ticket=ticket, date=date,
+                                                  type_of_service=type_of_service, hour=hour)
+
+        return Response({"message": "Class booked successfully"}, status=status.HTTP_201_CREATED)
 
 
 class AdminAddPassesToClient(ModelViewSet):

@@ -1,3 +1,4 @@
+
 body {
   background-color: #121212;
 }
@@ -96,4 +97,34 @@ form input[type="submit"] {
 
 form input[type="submit"]:hover {
   background-color: #d4ac0d;
+}
+
+
+.titles {
+  text-align: left;
+}
+
+
+.inline-elements {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
+.filterButton {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: #f1c40f; /* Match the theme's highlight color */
+  font-size: inherit;
+  font-family: inherit;
+  text-align: right;
+  padding: 0; /* No extra padding */
+  margin: 0; /* No extra margin */
+  cursor: pointer;
+}
+
+.filterButton:hover {
+  text-decoration: underline; /* Subtle visual feedback on hover */
 }

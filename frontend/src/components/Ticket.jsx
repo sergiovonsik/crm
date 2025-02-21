@@ -1,6 +1,8 @@
 import React from "react";
 import "../styles/Ticket.css"; // Import the CSS file
 
+import PropTypes from "prop-types";
+
 const Ticket = ({ ticket }) => {
   const {
     id,
@@ -22,6 +24,17 @@ const Ticket = ({ ticket }) => {
       </span>
     </div>
   );
+};
+
+Ticket.propTypes = {
+  ticket: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    type_of_service: PropTypes.string.isRequired,
+    amount_of_uses_LEFT: PropTypes.number.isRequired,
+    payment_day: PropTypes.string.isRequired,
+    expire_time: PropTypes.string.isRequired,
+    is_expired: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default Ticket;

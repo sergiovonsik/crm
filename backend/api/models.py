@@ -56,3 +56,25 @@ class PaymentTicket(models.Model):
                 f"Payment Day: {self.payment_day} | Expires: {self.expire_time} | \n"
                 f"Uses Left: {self.amount_of_uses_LEFT} | Expired: {self.is_expired} | \n"
                 f"Status: {self.status} | Price: {self.price} | Left to Pay: {self.left_to_pay} \n")
+
+class Booking(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='bookings')
+    ticket = models.ForeignKey(PaymentTicket, on_delete=models.CASCADE)
+    date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    type_of_service = models.CharField(
+        max_length=30,
+        choices=[('classes', 'classes'), ('free_climbing', 'free_climbing')],
+    )
+    hour = models.CharField(
+        max_length=30,
+        choices=[('6 to 8', '6 to 8'), ('8 to 10', '8 to 10'), ("", "")],
+        default=""
+    )
+
+    def __str__(self):
+        return (f"Booking #{self.pk} | Client: {self.client.username} | Ticket: {self.ticket.pk} | \n"
+                f"Date: {self.date} | Created At: {self.created_at} | \n"
+                f"Activity Type: {self.type_of_service} | Hours: {self.hour}")
+    class Meta:
+        unique_together = ('client', 'date')  # Prevent duplicate bookings per day

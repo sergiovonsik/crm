@@ -5,6 +5,7 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import BuyPasses from "./pages/BuyPasses.jsx";
+import BookPass from "./pages/BookPass.jsx";
 
 function Logout() {
   localStorage.clear()
@@ -33,6 +34,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BuyPasses />
+              </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/book_pass"
+            element={
+              <ProtectedRoute>
+                <BookPass />
               </ProtectedRoute>
             }
         />
