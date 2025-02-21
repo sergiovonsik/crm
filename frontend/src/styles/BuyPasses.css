@@ -84,3 +84,15 @@ button:disabled {
         background-color: #444;
     }
 }
+
+.error-message {
+    border: 1px solid #c0392b; /* Red border */
+    background-color: #3d1e1e; /* Dark red background */
+    color: #f0f0f0; /* Light text for visibility */
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center; /* Center the text inside */
+    max-width: 400px; /* Restrict width for better layout */
+    margin: 20px auto; /* Center the element horizontally */
+    font-size: 14px;
+}

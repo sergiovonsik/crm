@@ -21,11 +21,12 @@ class CustomClientAdmin(UserAdmin):
 # Register the PaymentTicket model
 @admin.register(PaymentTicket)
 class PaymentTicketAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'order_id', 'type_of_service', 'payment_day',
-                    'expire_time', 'id', 'price', 'left_to_pay')
-    list_filter = ('type_of_service', 'payment_day')
+    list_display = ('owner', 'amount_of_uses', 'amount_of_uses_LEFT',
+                    'order_id', 'type_of_service', 'payment_day',
+                    'expire_time', 'is_expired', 'id', 'price', 'left_to_pay')
+    list_filter = ('type_of_service', 'payment_day', 'is_expired')
     search_fields = ('owner__username', 'type_of_service')
-    ordering = ('payment_day',)
+    ordering = ('expire_time', 'amount_of_uses_LEFT')
 
 # Register the PaymentTicket model
 @admin.register(Booking)

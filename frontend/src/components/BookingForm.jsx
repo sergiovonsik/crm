@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import api from "../api";
 
-function BookingForm() {
+import PropTypes from "prop-types";
+
+function BookingForm({setErrorInfo}) {
     const [type_of_service, setType_of_service] = useState("");
     const [date, setDate] = useState(null);
     const [hour, setHour] = useState("");
@@ -26,13 +28,15 @@ function BookingForm() {
             console.log(res.data);
             if (res.status === 201) {
                 alert("Successfully booked.");
+                setErrorInfo("")
                 navigate("/");
-
-            } else {
-                alert("Failed to load tickets.");
-                navigate("/book_pass");}
+            } else{
+                setErrorInfo(res.error);
+            }
         } catch (error) {
-            alert("Booking failed: " + error.message);
+            const errorMessage = "Booking failed: " + error.response.data.error;
+            console.log(errorMessage);
+            setErrorInfo(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -61,7 +65,10 @@ function BookingForm() {
                 dateFormat="yyyy-MM-dd"
                 className="form-input"
                 placeholderText="Select Date"
-                filterDate={(date) => date.getDay() !== 0}  // Disable Saturdays (6) and Sundays (0)
+                filterDate={
+                (date) =>
+                    date.getDay() !== 0 && date >= new Date().setHours(0, 0, 0, 0)
+                }
                 required
             />
 
@@ -87,5 +94,9 @@ function BookingForm() {
         </form>
     );
 }
+
+BookingForm.propTypes = {
+    setErrorInfo: PropTypes.func,
+};
 
 export default BookingForm;

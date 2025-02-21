@@ -28,7 +28,6 @@ from .models import PaymentTicket, Client
 from .permissions import *
 from .serializers import ClientSerializer, TicketSerializer
 
-
 User = get_user_model()
 
 GOOGLE_CLIENT_ID = SOCIAL_AUTH_GOOGLE_CLIENT_ID
@@ -139,6 +138,7 @@ class ClientsViewDetail(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         user_profile = Client.objects.get(pk=request.user.pk)
+        updateExistingPasses(user_profile)
         serializer = self.get_serializer(user_profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -156,7 +156,6 @@ class ClientsViewDetail(ModelViewSet):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
-
 
 
 class UserBookingViewSet(ViewSet):
@@ -183,10 +182,9 @@ class UserBookingViewSet(ViewSet):
         if Booking.objects.filter(client=client, date=date, type_of_service=type_of_service, hour=hour).exists():
             return Response({"error": "Already booked for this date"}, status=status.HTTP_400_BAD_REQUEST)
 
-
         ticket = discountClientOnePass(client, type_of_service)
 
-        print("TICKET"  )
+        print("TICKET")
         print(ticket)
         if not ticket:
             return Response({"error": "No available tickets"}, status=status.HTTP_400_BAD_REQUEST)
@@ -241,6 +239,7 @@ class AdminTakeAPassForClient(ModelViewSet):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
+
 
 class MercadoPagoTicket(ModelViewSet):
     queryset = PaymentTicket.objects.all()
