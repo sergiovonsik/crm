@@ -1,19 +1,27 @@
-import {useState} from "react";
+import LoadingIndicator from "./LoadingIndicator";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {parseISO} from "date-fns";
+import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
+import api from "../api";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/Form.css";
-import LoadingIndicator from "./LoadingIndicator";
-import api from "../api";
-
-import PropTypes from "prop-types";
 
 function BookingForm({setErrorInfo}) {
+    const [alreadyBookedDays, setAlreadyBookedDays] = useState( []);
     const [type_of_service, setType_of_service] = useState("");
     const [date, setDate] = useState(null);
     const [hour, setHour] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const alreadyBookedDays = JSON.parse(sessionStorage.getItem("bookingFiles") || "[]")
+            .map(item => parseISO(item.date));
+        setAlreadyBookedDays(alreadyBookedDays);
+    }, []);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,7 +75,9 @@ function BookingForm({setErrorInfo}) {
                 placeholderText="Select Date"
                 filterDate={
                 (date) =>
-                    date.getDay() !== 0 && date >= new Date().setHours(0, 0, 0, 0)
+                    date.getDay() !== 0 &&
+                    date >= new Date().setHours(0, 0, 0, 0) &&
+                    !alreadyBookedDays.some((bookedDay) => bookedDay.getTime() === date.getTime())
                 }
                 required
             />

@@ -9,6 +9,7 @@ from django.utils import timezone
 import django.core.serializers
 from django.utils.dateparse import parse_date
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -129,6 +130,14 @@ class ClientsViewList(ListCreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [AllowAny, AdminGetAnyPost]
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]  # Ensures only logged-in users can log out
+
+    def post(self, request):
+        django.contrib.auth.logout(request)  # Clears the session
+        return Response({"message": "Logged out successfully"}, status=200)
 
 
 class ClientsViewDetail(ModelViewSet):
