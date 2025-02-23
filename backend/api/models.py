@@ -71,6 +71,8 @@ class Booking(models.Model):
         max_length=30,
         choices=[('6 to 8', '6 to 8'), ('8 to 10', '8 to 10'), ("", "")],
         default="",
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

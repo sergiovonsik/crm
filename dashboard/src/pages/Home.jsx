@@ -4,6 +4,7 @@ import "../styles/Home.css";
 import Sidebar from "../components/Sidebar";
 import LineChartComponent from "../components/LineChartComponent.jsx";
 import DonutChartComponent from "../components/DonutChartComponent.jsx";
+import RangeSlider from "../components/TimeSlider.jsx";
 //import Ticket from "../components/Ticket";
 //import Booking from "../components/Booking.jsx";
 
@@ -16,16 +17,16 @@ function Home() {
     const [ticketChart, setTicketChart] = useState([]);
     const [activeClientsChart, setActiveClientsChart] = useState([]);
     const [typeOfServiceChart, setTypeOfServiceChart] = useState([]);
-    const [fromDate, setFromDate] = useState(new Date());
-    const [lapseDate, setLapseDate] = useState(30);
+    const [rangeOfDates, setRangeOfDates] = useState([-30, 0]);
     const [user , setUser ] = useState({});
 
     useEffect(() => {
+        const init_day = new Date(new Date().setDate(new Date().getDate() - rangeOfDates[1]));
         getUserData();
-        getBookingChartData(fromDate, lapseDate);
-        getTicketChartData(fromDate, lapseDate);
-        getActiveClientsChartData(fromDate, lapseDate);
-        getTypeOfServiceChartData(fromDate, lapseDate);
+        getBookingChartData(init_day, -rangeOfDates[0]);
+        getTicketChartData(init_day, -rangeOfDates[0]);
+        getActiveClientsChartData(init_day, -rangeOfDates[0]);
+        getTypeOfServiceChartData(init_day, -rangeOfDates[0]);
 
     }, []);
 
@@ -127,6 +128,7 @@ function Home() {
         <div>
             <Sidebar/>
             <div className="main-content">
+                <RangeSlider rangeOfDates={rangeOfDates} setRangeOfDates={setRangeOfDates}/>
                 <h2>Clients Insights</h2>
                 <div className="donut-container">
                     <div className="donut-box">
