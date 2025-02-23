@@ -1,0 +1,47 @@
+.booking {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid;
+    font-size: 16px;
+    background-color: #222; /* Dark background */
+    font-family: Arial, sans-serif;
+    color: #ddd; /* Light text for readability */
+}
+
+.booking span {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.booking strong {
+    color: #fff; /* White text for contrast */
+}
+
+.booking.pending {
+    border-color: #bdc3c7; /* Grey border */
+    background-color: #444; /* Dark grey background */
+}
+
+.booking.used {
+    border-color: #c0392b; /* Red border */
+    background-color: #3d1e1e; /* Dark red background */
+}
+
+.status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.pending .status {
+    background-color: #bdc3c7; /* Grey status */
+}
+
+.used .status {
+    background-color: #c0392b; /* Red status */
+}

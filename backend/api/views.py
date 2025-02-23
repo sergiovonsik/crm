@@ -23,7 +23,9 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from allauth.socialaccount.models import SocialAccount
 
+
 # Project-specific imports
+from datetime import timedelta
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .models import PaymentTicket, Client
 from .permissions import *
@@ -81,13 +83,11 @@ class GoogleAuthView(APIView):
 
 
 def updateExistingPasses(client: Client) -> None:
-    client_tickets_in_use = PaymentTicket.objects.filter(owner=client, is_expired=False).order_by('-expire_time')
+    client_tickets_in_use = PaymentTicket.objects.filter(owner=client, status='in_use').order_by('-expire_time')
     for ticket in client_tickets_in_use:
-        if timezone.now().date() > ticket.expire_time:
+        if timezone.now().date() > ticket.expire_time or ticket.amount_of_uses_LEFT == 0:
             ticket.is_expired = True
-            ticket.save()
-        elif ticket.amount_of_uses_LEFT == 0:
-            ticket.is_expired = True
+            ticket.status = 'expired'
             ticket.save()
 
 
@@ -206,6 +206,8 @@ class UserBookingViewSet(ViewSet):
         return Response({"message": "Class booked successfully"}, status=status.HTTP_201_CREATED)
 
 
+# ADMIN VIEWS
+
 class AdminAddPassesToClient(ModelViewSet):
     queryset = PaymentTicket.objects.all()
     serializer_class = TicketSerializer
@@ -249,6 +251,132 @@ class AdminTakeAPassForClient(ModelViewSet):
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
+
+class AdminPassesChartData(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            days_lapse = int(request.data.get("days_lapse"))
+            init_day = parse_date(request.data.get("init_day"))
+
+            init_day -= timedelta(days=days_lapse)  # start from before up to today
+            passes_per_day = []
+
+            for i in range(days_lapse):
+                date = init_day + timedelta(days=i)
+                passes_per_day.append(
+                    dict(date=str(date), value=Booking.objects.filter(date=date).count())
+                )
+
+            return Response({
+                "amount_per_day": passes_per_day,
+            }, status=status.HTTP_200_OK)
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminTicketsChartData(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            pprint(request.data)
+            days_lapse = int(request.data.get("days_lapse"))
+            init_day = parse_date(request.data.get("init_day"))
+
+            init_day -= timedelta(days=days_lapse)  # start from before up to today
+            passes_per_day = []
+
+
+
+
+            for i in range(days_lapse):
+                date = init_day + timedelta(days=i)
+                passes_per_day.append(
+                    dict(date=str(date), value=PaymentTicket.objects.filter(payment_day=date).count())
+                )
+
+            return Response({
+                "amount_per_day": passes_per_day,
+            }, status=status.HTTP_200_OK)
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminActiveClientsChartData(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            pprint(request.data)
+            days_lapse = int(request.data.get("days_lapse"))
+            init_day = parse_date(request.data.get("init_day"))
+            last_possible_booking_day = init_day - timedelta(days=days_lapse)
+
+            init_day -= timedelta(days=days_lapse)  # start from before up to today
+            active_clients = 0
+            total_clients = Client.objects.all().count()
+
+
+
+
+            for client in Client.objects.all():
+                last_booking_instance = (Booking.objects.filter(client=client).order_by('-date').first())
+                if last_booking_instance:
+                    last_booking = last_booking_instance.date
+                    print(client)
+                    print(last_booking)
+                    if last_booking >= last_possible_booking_day:
+                        active_clients += 1
+
+
+            return Response({"chart_data":[
+                {"category":"active", "value":active_clients},
+                {"category":"non-active", "value":(total_clients-active_clients)},
+            ]}, status=status.HTTP_200_OK)
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminTypeOfServiceChartData(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            days_lapse = int(request.data.get("days_lapse"))
+            init_day = parse_date(request.data.get("init_day")) -  timedelta(days=days_lapse)
+            free_climbing = 0
+            classes= 0
+
+            for i in range(days_lapse):
+                date = init_day + timedelta(days=i)
+                for booking in Booking.objects.filter(date=date):
+                    if booking.type_of_service == "free_climbing":
+                        free_climbing += 1
+                    elif  booking.type_of_service == "classes":
+                        classes += 1
+
+
+            pprint({"chart_data":[
+                    {"category":"free climbing", "value":free_climbing},
+                    {"category":"classes", "value":classes},
+                ]})
+
+            return Response({"chart_data":[
+                    {"category":"free climbing", "value":free_climbing},
+                    {"category":"classes", "value":classes},
+                ]}, status=status.HTTP_200_OK)
+
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# MERCADO PAGO VIEWS
 
 class MercadoPagoTicket(ModelViewSet):
     queryset = PaymentTicket.objects.all()

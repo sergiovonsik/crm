@@ -57,6 +57,7 @@ class PaymentTicket(models.Model):
                 f"Uses Left: {self.amount_of_uses_LEFT} | Expired: {self.is_expired} | \n"
                 f"Status: {self.status} | Price: {self.price} | Left to Pay: {self.left_to_pay} \n")
 
+
 class Booking(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='bookings')
     ticket = models.ForeignKey(PaymentTicket, on_delete=models.CASCADE)
@@ -69,7 +70,7 @@ class Booking(models.Model):
     hour = models.CharField(
         max_length=30,
         choices=[('6 to 8', '6 to 8'), ('8 to 10', '8 to 10'), ("", "")],
-        default=""
+        default="",
     )
 
     def __str__(self):

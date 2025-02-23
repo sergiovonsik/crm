@@ -1,0 +1,47 @@
+.ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 2px solid;
+  font-size: 16px;
+  background-color: #222; /* Dark background */
+  font-family: Arial, sans-serif;
+  color: #ddd; /* Light text for readability */
+}
+
+.ticket span {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ticket strong {
+  color: #fff; /* White text for contrast */
+}
+
+.ticket.valid {
+  border-color: #27ae60; /* Green border */
+  background-color: #1e3d29; /* Dark green background */
+}
+
+.ticket.expired {
+  border-color: #c0392b; /* Red border */
+  background-color: #3d1e1e; /* Dark red background */
+}
+
+.status {
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.valid .status {
+  background-color: #27ae60; /* Green status */
+}
+
+.expired .status {
+  background-color: #c0392b; /* Red status */
+}
