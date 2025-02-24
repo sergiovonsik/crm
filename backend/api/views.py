@@ -257,16 +257,16 @@ class AdminPassesChartData(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            days_lapse = int(request.data.get("days_lapse"))
-            init_day = parse_date(request.data.get("init_day"))
+            start_day = parse_date(request.data.get("start_day"))
+            end_day = parse_date(request.data.get("end_day"))
 
-            init_day -= timedelta(days=days_lapse)  # start from before up to today
             passes_per_day = []
 
-            for i in range(days_lapse):
-                date = init_day + timedelta(days=i)
+            current_date = start_day
+            while current_date <= end_day:
+                current_date = current_date + timedelta(days=1)
                 passes_per_day.append(
-                    dict(date=str(date), value=Booking.objects.filter(date=date).count())
+                    dict(date=str(current_date), value=Booking.objects.filter(date=current_date).count())
                 )
 
             return Response({
@@ -282,20 +282,16 @@ class AdminTicketsChartData(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            pprint(request.data)
-            days_lapse = int(request.data.get("days_lapse"))
-            init_day = parse_date(request.data.get("init_day"))
+            start_day = parse_date(request.data.get("start_day"))
+            end_day = parse_date(request.data.get("end_day"))
 
-            init_day -= timedelta(days=days_lapse)  # start from before up to today
             passes_per_day = []
 
-
-
-
-            for i in range(days_lapse):
-                date = init_day + timedelta(days=i)
+            current_date = start_day
+            while current_date <= end_day:
+                current_date = current_date + timedelta(days=1)
                 passes_per_day.append(
-                    dict(date=str(date), value=PaymentTicket.objects.filter(payment_day=date).count())
+                    dict(date=str(current_date), value=PaymentTicket.objects.filter(payment_day=current_date).count())
                 )
 
             return Response({
@@ -311,12 +307,9 @@ class AdminActiveClientsChartData(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            pprint(request.data)
-            days_lapse = int(request.data.get("days_lapse"))
-            init_day = parse_date(request.data.get("init_day"))
-            last_possible_booking_day = init_day - timedelta(days=days_lapse)
+            start_day = parse_date(request.data.get("start_day"))
+            end_day = parse_date(request.data.get("end_day"))
 
-            init_day -= timedelta(days=days_lapse)  # start from before up to today
             active_clients = 0
             total_clients = Client.objects.all().count()
 
@@ -326,10 +319,8 @@ class AdminActiveClientsChartData(APIView):
             for client in Client.objects.all():
                 last_booking_instance = (Booking.objects.filter(client=client).order_by('-date').first())
                 if last_booking_instance:
-                    last_booking = last_booking_instance.date
-                    print(client)
-                    print(last_booking)
-                    if last_booking >= last_possible_booking_day:
+                    last_booking_date = last_booking_instance.date
+                    if start_day <= last_booking_date <= end_day:
                         active_clients += 1
 
 
@@ -347,14 +338,19 @@ class AdminTypeOfServiceChartData(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            days_lapse = int(request.data.get("days_lapse"))
-            init_day = parse_date(request.data.get("init_day")) -  timedelta(days=days_lapse)
+            start_day = parse_date(request.data.get("start_day"))
+            end_day = parse_date(request.data.get("end_day"))
+
+            print("start_day", start_day)
+            print("end_day", end_day)
             free_climbing = 0
             classes= 0
 
-            for i in range(days_lapse):
-                date = init_day + timedelta(days=i)
-                for booking in Booking.objects.filter(date=date):
+
+            current_date = start_day
+            while current_date <= end_day:
+                current_date = current_date + timedelta(days=1)
+                for booking in Booking.objects.filter(date=current_date):
                     if booking.type_of_service == "free_climbing":
                         free_climbing += 1
                     elif  booking.type_of_service == "classes":

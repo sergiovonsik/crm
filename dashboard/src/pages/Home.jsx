@@ -21,12 +21,13 @@ function Home() {
     const [user , setUser ] = useState({});
 
     useEffect(() => {
-        const init_day = new Date(new Date().setDate(new Date().getDate() - rangeOfDates[1]));
+        const end_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[1]));
+        const start_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[0]));
         getUserData();
-        getBookingChartData(init_day, -rangeOfDates[0]);
-        getTicketChartData(init_day, -rangeOfDates[0]);
-        getActiveClientsChartData(init_day, -rangeOfDates[0]);
-        getTypeOfServiceChartData(init_day, -rangeOfDates[0]);
+        getBookingChartData(end_day, start_day);
+        getTicketChartData(end_day, start_day);
+        getActiveClientsChartData(end_day, start_day);
+        getTypeOfServiceChartData(end_day, start_day);
 
     }, [rangeOfDates]);
 
@@ -61,12 +62,12 @@ function Home() {
     };
 
 
-    const getBookingChartData = async (init_day, days_lapse) => {
+    const getBookingChartData = async (end_day, start_day) => {
         try {
             const res = await api.post(`/api/userAdmin/BookingChart/`,
                 {
-                    init_day: init_day.toISOString().split('T')[0],
-                    days_lapse: days_lapse,
+                    end_day: end_day.toISOString().split('T')[0],
+                    start_day: start_day.toISOString().split('T')[0],
                 });
             const data = res.data.amount_per_day;
             setBookingChart(data);
@@ -76,12 +77,12 @@ function Home() {
     };
 
 
-    const getTicketChartData = async (init_day, days_lapse) => {
+    const getTicketChartData = async (end_day, start_day) => {
         try {
             const res = await api.post(`/api/userAdmin/TicketChart/`,
                 {
-                    init_day: init_day.toISOString().split('T')[0],
-                    days_lapse: days_lapse,
+                    end_day: end_day.toISOString().split('T')[0],
+                    start_day: start_day.toISOString().split('T')[0],
                 });
             const data = res.data.amount_per_day;
             setTicketChart(data);
@@ -91,12 +92,12 @@ function Home() {
     };
 
 
-    const getActiveClientsChartData = async (init_day, days_lapse) => {
+    const getActiveClientsChartData = async (end_day, start_day) => {
         try {
             const res = await api.post(`/api/userAdmin/ActiveClientsChart/`,
                 {
-                    init_day: init_day.toISOString().split('T')[0],
-                    days_lapse: days_lapse,
+                    end_day: end_day.toISOString().split('T')[0],
+                    start_day: start_day.toISOString().split('T')[0],
                 });
             const data = res.data.chart_data;
             setActiveClientsChart(data);
@@ -106,12 +107,12 @@ function Home() {
     };
 
 
-    const getTypeOfServiceChartData = async (init_day, days_lapse) => {
+    const getTypeOfServiceChartData = async (end_day, start_day) => {
         try {
             const res = await api.post(`/api/userAdmin/TypeOfServiceChartData/`,
                 {
-                    init_day: init_day.toISOString().split('T')[0],
-                    days_lapse: days_lapse,
+                    end_day: end_day.toISOString().split('T')[0],
+                    start_day: start_day.toISOString().split('T')[0],
                 });
             const data = res.data.chart_data;
             setTypeOfServiceChart(data);
