@@ -8,7 +8,7 @@ function LineChartComponent({chartData, lineColor, title}){
         <div className="p-4">
             {/* Line Chart */}
             <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-                <h2 className="text-xl font-semibold mb-2">Performance Over Time of {title}</h2>
+                <h2 className="text-xl font-semibold mb-2">Performance of {title} over time </h2>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <XAxis dataKey="date" />

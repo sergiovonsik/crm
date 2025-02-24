@@ -23,7 +23,6 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from allauth.socialaccount.models import SocialAccount
 
-
 # Project-specific imports
 from datetime import timedelta
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
@@ -208,6 +207,8 @@ class UserBookingViewSet(ViewSet):
 
 # ADMIN VIEWS
 
+# ADMIN VIEWS FOR BUSINESS DATA
+
 class AdminAddPassesToClient(ModelViewSet):
     queryset = PaymentTicket.objects.all()
     serializer_class = TicketSerializer
@@ -262,15 +263,18 @@ class AdminPassesChartData(APIView):
 
             passes_per_day = []
 
-            current_date = start_day
+            current_date = start_day - timedelta(days=1)
             while current_date <= end_day:
                 current_date = current_date + timedelta(days=1)
                 passes_per_day.append(
-                    dict(date=str(current_date), value=Booking.objects.filter(date=current_date).count())
+                    dict(
+                        date=str(current_date),
+                        value=Booking.objects.filter(date=current_date).count())
                 )
 
+            pprint(passes_per_day)
             return Response({
-                "amount_per_day": passes_per_day,
+                "chart_data": passes_per_day,
             }, status=status.HTTP_200_OK)
 
         except (ValueError, TypeError) as e:
@@ -313,9 +317,6 @@ class AdminActiveClientsChartData(APIView):
             active_clients = 0
             total_clients = Client.objects.all().count()
 
-
-
-
             for client in Client.objects.all():
                 last_booking_instance = (Booking.objects.filter(client=client).order_by('-date').first())
                 if last_booking_instance:
@@ -323,10 +324,9 @@ class AdminActiveClientsChartData(APIView):
                     if start_day <= last_booking_date <= end_day:
                         active_clients += 1
 
-
-            return Response({"chart_data":[
-                {"category":"active", "value":active_clients},
-                {"category":"non-active", "value":(total_clients-active_clients)},
+            return Response({"chart_data": [
+                {"category": "active", "value": active_clients},
+                {"category": "non-active", "value": (total_clients - active_clients)},
             ]}, status=status.HTTP_200_OK)
 
         except (ValueError, TypeError) as e:
@@ -344,8 +344,7 @@ class AdminTypeOfServiceChartData(APIView):
             print("start_day", start_day)
             print("end_day", end_day)
             free_climbing = 0
-            classes= 0
-
+            classes = 0
 
             current_date = start_day
             while current_date <= end_day:
@@ -353,20 +352,52 @@ class AdminTypeOfServiceChartData(APIView):
                 for booking in Booking.objects.filter(date=current_date):
                     if booking.type_of_service == "free_climbing":
                         free_climbing += 1
-                    elif  booking.type_of_service == "classes":
+                    elif booking.type_of_service == "classes":
                         classes += 1
 
+            pprint({"chart_data": [
+                {"category": "free climbing", "value": free_climbing},
+                {"category": "classes", "value": classes},
+            ]})
 
-            pprint({"chart_data":[
-                    {"category":"free climbing", "value":free_climbing},
-                    {"category":"classes", "value":classes},
-                ]})
+            return Response({"chart_data": [
+                {"category": "free climbing", "value": free_climbing},
+                {"category": "classes", "value": classes},
+            ]}, status=status.HTTP_200_OK)
 
-            return Response({"chart_data":[
-                    {"category":"free climbing", "value":free_climbing},
-                    {"category":"classes", "value":classes},
-                ]}, status=status.HTTP_200_OK)
 
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ADMIN VIEWS FOR SEARCH AND ASSIGN PASSES FOR USERS
+
+class AdminSearchClients(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            pprint(request.query_params)
+            pprint(request.query_params.get("input_value"))
+            partial_data = request.query_params.get("input_value")
+            clients_found = []
+
+            for client_found in Client.objects.filter(username__icontains=partial_data):
+                if client_found not in clients_found:
+                    clients_found.append(client_found)
+
+            for client_found in Client.objects.filter(email__startswith=partial_data):
+                if client_found not in clients_found:
+                    clients_found.append(client_found)
+
+            for client_found in Client.objects.filter(id__contains=partial_data):
+                if client_found not in clients_found:
+                    clients_found.append(client_found)
+
+            pprint(clients_found)
+            return Response({
+                "clients_found": django.core.serializers.serialize('json', clients_found)
+            }, status=status.HTTP_200_OK)
 
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)

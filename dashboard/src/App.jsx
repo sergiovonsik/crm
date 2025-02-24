@@ -2,10 +2,10 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom"
 import React, { useEffect } from 'react';
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-import Home from "./pages/Home"
+import BusinessData from "./pages/BusinessData.jsx"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
-import BuyPasses from "./pages/BuyPasses.jsx";
+import AssignPasses from "./pages/AssignPasses.jsx";
 import BookPass from "./pages/BookPass.jsx";
 import api from "./api";
 
@@ -43,15 +43,15 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <Home />
+              <BusinessData />
             </ProtectedRoute>
           }
         />
         <Route
-            path="/buy_passes"
+            path="/assign_passes"
             element={
               <ProtectedRoute>
-                <BuyPasses />
+                <AssignPasses />
               </ProtectedRoute>
             }
         />

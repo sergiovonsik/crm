@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import "../styles/BuyPasses.css";
+import "../styles/AssignPasses.css";
 import BookingForm from "../components/BookingForm.jsx";
 
 function BookPass() {

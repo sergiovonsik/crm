@@ -8,7 +8,7 @@ import RangeSlider from "../components/TimeSlider.jsx";
 //import Ticket from "../components/Ticket";
 //import Booking from "../components/Booking.jsx";
 
-function Home() {
+function BusinessData() {
     const [paymentTickets, setPaymentTickets] = useState([]);
     //const [ticketsFilter, setTicketsFilter] = useState(true);
     const [bookingFiles, setBookingFiles] = useState([]);
@@ -69,7 +69,7 @@ function Home() {
                     end_day: end_day.toISOString().split('T')[0],
                     start_day: start_day.toISOString().split('T')[0],
                 });
-            const data = res.data.amount_per_day;
+            const data = res.data.chart_data;
             setBookingChart(data);
         } catch (err) {
             console.error("Error", err);
@@ -147,7 +147,7 @@ function Home() {
     );
 }
 
-export default Home;
+export default BusinessData;
 
 
 /*
