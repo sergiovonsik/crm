@@ -28,7 +28,7 @@ function Home() {
         getActiveClientsChartData(init_day, -rangeOfDates[0]);
         getTypeOfServiceChartData(init_day, -rangeOfDates[0]);
 
-    }, []);
+    }, [rangeOfDates]);
 
 
     const getUserData = async () => {
@@ -54,7 +54,6 @@ function Home() {
 
             setUser(userObjectData)
 
-            console.log(data);
         } catch (err) {
             console.error("Error fetching tickets:", err);
             alert("Failed to load tickets.");
@@ -85,7 +84,6 @@ function Home() {
                     days_lapse: days_lapse,
                 });
             const data = res.data.amount_per_day;
-            console.log(data);
             setTicketChart(data);
         } catch (err) {
             console.error("Error", err);
@@ -100,7 +98,6 @@ function Home() {
                     init_day: init_day.toISOString().split('T')[0],
                     days_lapse: days_lapse,
                 });
-            console.log(res.data);
             const data = res.data.chart_data;
             setActiveClientsChart(data);
         } catch (err) {
@@ -116,7 +113,6 @@ function Home() {
                     init_day: init_day.toISOString().split('T')[0],
                     days_lapse: days_lapse,
                 });
-            console.log(res.data);
             const data = res.data.chart_data;
             setTypeOfServiceChart(data);
         } catch (err) {

@@ -1,5 +1,7 @@
-body {
-    background-color: #000;
+
+
+.component-container {
+    margin-bottom: 10vw;
 }
 
 .title {
@@ -12,15 +14,57 @@ body {
 }
 
 .slider-container {
-    position: relative;
-    width: auto;
-    margin: 42px auto 0;
+    flex-grow: 1;
+    margin-left: 20px;
+    position: relative; /* Ensure absolute elements stay within */
 }
 
+.slider-wrapper {
+    display: flex;
+    align-items: center; /* Align items to the same line */
+    justify-content: space-between; /* Space between button and slider */
+    width: 95%;
+    margin: 8vh auto;
+}
+
+
+.refresh-button {
+    padding: 10px 20px; /* Adjust padding */
+    background-color: #ffcc00;
+    color: rgba(9, 9, 9);
+    font-size: 18px; /* Smaller text */
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap; /* Prevent text from breaking */
+    display: inline-block; /* Shrink to fit content */
+}
+
+
 /* Position the labels above the thumbs */
-.thumb-label {
+
+/* Fix labels positioning */
+.thumb-label-top {
     position: absolute;
-    top: -40px;
+    top: -6vh; /* Adjust this if needed */
+    left: 50%; /* This ensures it aligns properly */
+    transform: translateX(-50%);
+    background: #ffbf00;
+    color: black;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: monospace;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: left 0.1s ease-in-out;
+}
+.thumb-label-bottom {
+    position: absolute;
+    top: 6vh; /* Adjust this if needed */
+    left: 50%; /* This ensures it aligns properly */
     transform: translateX(-50%);
     background: #ffbf00;
     color: black;
