@@ -34,13 +34,12 @@ function SelectedUserData({selectedUserData, paymentTickets, bookingFiles, setTi
                 </p>
             </div>
         </div>
-
         <div>
             <div className="inline-elements">
                 <h2 className="titles">Tickets:</h2>
 
                 <button className="filterButton" onClick={() => setTicketsFilter(!ticketsFilter)}>
-                    {ticketsFilter ? "Hide Expired" : "Show All"} Tickets
+                    {ticketsFilter ? "Show All" : "Hide Expired"} Tickets
                 </button>
             </div>
             {Array.isArray(paymentTickets) && paymentTickets.length > 0 ? (
@@ -62,7 +61,7 @@ function SelectedUserData({selectedUserData, paymentTickets, bookingFiles, setTi
                 <h2 className="titles">Bookings:</h2>
 
                 <button className="filterButton" onClick={() => setBookingFilter(!bookingFilter)}>
-                    {bookingFilter ? "Hide Expired" : "Show All"} Bookings
+                    {bookingFilter ? "Show All" : "Hide Expired"} Bookings
                 </button>
             </div>
             {Array.isArray(bookingFiles) && bookingFiles.length > 0 ? (

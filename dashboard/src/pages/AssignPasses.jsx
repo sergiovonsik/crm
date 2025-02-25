@@ -37,7 +37,7 @@ function AssignPasses() {
             sessionStorage.setItem("bookingFiles", JSON.stringify(booking_tickets)); // Save to sessionStorage
             setBookingFiles(booking_tickets || []);
 
-            let payment_ticket = data.payment_ticket;
+            let payment_ticket = data.payment_ticket
             payment_ticket.sort((a, b) => new Date(a.expire_time) - new Date(b.expire_time));
             sessionStorage.setItem("payment_ticket", JSON.stringify(payment_ticket)); // Save to sessionStorage
             setPaymentTickets(payment_ticket || []);
@@ -61,8 +61,6 @@ function AssignPasses() {
                 params: { input_value: query },
             });
             const clientsFound = JSON.parse(res.data.clients_found)
-            console.log(clientsFound)
-            console.log(typeof(clientsFound))
 
             setUsersFound(clientsFound);
         } catch (err) {

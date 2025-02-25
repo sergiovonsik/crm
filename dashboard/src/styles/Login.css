@@ -3,7 +3,7 @@
     padding: 20px;
     border-radius: 10px; /* Slightly rounded corners */
     width: fit-content; /* Adjust width to content */
-    margin: auto; /* Centering */
+    margin: 15vh auto; /* Centering */
     text-align: center;
 }
 

@@ -34,6 +34,8 @@ urlpatterns = [
          name="type-of-service-chart-data"),
     path("userAdmin/SearchUsers/", AdminSearchClients.as_view(),
          name="search-clients"),
+    path("userAdmin/todayPasses/", AdminGetsTodayPasses.as_view(),
+         name="today-passes"),
     path("userAdmin/<int:pk>/info/", AdminGetClientData.as_view({'get': 'retrieve',
                                                                        'put': 'update',
                                                                        'delete': 'destroy',

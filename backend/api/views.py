@@ -29,7 +29,7 @@ from datetime import timedelta
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .models import PaymentTicket, Client
 from .permissions import *
-from .serializers import ClientSerializer, TicketSerializer
+from .serializers import ClientSerializer, TicketSerializer, BookingSerializer
 
 User = get_user_model()
 
@@ -400,6 +400,32 @@ class AdminSearchClients(APIView):
 
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminGetsTodayPasses(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            #partial_data = request.query_params.get("input_value")
+            print("TODAYS TIME")
+            print(timezone.now().date())
+            booking_files = Booking.objects.filter(date=timezone.now().date())
+
+            for booking in booking_files:
+                print(booking.id)
+                print(booking.date)
+
+            serialized_data = BookingSerializer(booking_files, many=True).data
+
+            return Response({"booking_files": serialized_data}, status=status.HTTP_200_OK)
+
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 

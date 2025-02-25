@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api";
-import "../styles/Home.css";
+import "../styles/BusinessData.css";
 import Sidebar from "../components/Sidebar";
 import LineChartComponent from "../components/LineChartComponent.jsx";
 import DonutChartComponent from "../components/DonutChartComponent.jsx";

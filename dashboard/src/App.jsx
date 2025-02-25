@@ -6,8 +6,9 @@ import BusinessData from "./pages/BusinessData.jsx"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AssignPasses from "./pages/AssignPasses.jsx";
-import BookPass from "./pages/BookPass.jsx";
+import BookPass from "./pages/BookingsForToday.jsx";
 import api from "./api";
+import BookingsForToday from "./pages/BookingsForToday.jsx";
 
 const Logout = () => {
   useEffect(() => {
@@ -56,10 +57,10 @@ function App() {
             }
         />
         <Route
-            path="/book_pass"
+            path="/booking_for_today"
             element={
               <ProtectedRoute>
-                <BookPass />
+                <BookingsForToday />
               </ProtectedRoute>
             }
         />
