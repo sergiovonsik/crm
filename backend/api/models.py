@@ -21,7 +21,7 @@ class PaymentTicket(models.Model):
         max_length=30,
         choices=[('classes', 'classes'), ('free_climbing', 'free_climbing')],
     )
-    payment_day = models.DateField(default=timezone.now, editable=False)
+    payment_day = models.DateField(auto_now_add=True, editable=False)
 
     amount_of_uses = models.IntegerField(default=0)
 

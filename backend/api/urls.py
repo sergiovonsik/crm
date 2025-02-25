@@ -12,15 +12,8 @@ urlpatterns = [
     # userActions
     path("users/info/", ClientsViewList.as_view(),
          name="users-data"),
-    path("user/<int:pk>/info/", ClientsViewDetail.as_view({'get': 'retrieve',
-                                                           'put': 'update',
-                                                           'delete': 'destroy',
-                                                           'patch': 'partial_update'}),
+    path("user/me/info/", AdminGetClientData.as_view({'get': 'list'}),
          name="user-data"),
-    path("user/me/info/", ClientsViewDetail.as_view({'get': 'list'}),
-         name="user-data"),
-    path("user/add_passes/", AdminAddPassesToClient.as_view({'post': 'create'}),
-         name="user-add-passes"),
     path("user/book_pass/", UserBookingViewSet.as_view({'post': 'create'}),
          name="user-book-passes"),
 
@@ -41,5 +34,18 @@ urlpatterns = [
          name="type-of-service-chart-data"),
     path("userAdmin/SearchUsers/", AdminSearchClients.as_view(),
          name="search-clients"),
+    path("userAdmin/<int:pk>/info/", AdminGetClientData.as_view({'get': 'retrieve',
+                                                                       'put': 'update',
+                                                                       'delete': 'destroy',
+                                                                       'patch': 'partial_update'}),
+         name="user-data"),
+    path("userAdmin/<int:pk>/info/", AdminGetClientData.as_view({'get': 'retrieve',
+                                                                       'put': 'update',
+                                                                       'delete': 'destroy',
+                                                                       'patch': 'partial_update'}),
+         name="user-data"),
+
+    path("userAdmin/<int:pk>/addPasses/", AdminAddPassesToClient.as_view({'post': 'create'}),
+         name="admin-add-passes"),
 
 ]

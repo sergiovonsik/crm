@@ -54,6 +54,8 @@ function TimeSlider({ rangeOfDates, setRangeOfDates }) {
 }
 
 TimeSlider.propTypes = {
+    rangeOfDates: PropTypes.arrayOf(PropTypes.number).isRequired,
+    setRangeOfDates: PropTypes.func.isRequired,
 };
 
 export default TimeSlider;

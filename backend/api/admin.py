@@ -7,7 +7,6 @@ from .models import Client, PaymentTicket, Booking
 class PaymentTicketInline(admin.TabularInline):  # or use StackedInline for a different layout
     model = PaymentTicket
     extra = 1  # Number of empty forms to display for new objects
-    readonly_fields = ('payment_day', 'expire_time', 'status', 'amount_of_uses_LEFT')  # Make some fields read-only
 
 
 class CustomClientAdmin(UserAdmin):
@@ -21,7 +20,7 @@ class CustomClientAdmin(UserAdmin):
 # Register the PaymentTicket model
 @admin.register(PaymentTicket)
 class PaymentTicketAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'amount_of_uses', 'amount_of_uses_LEFT',
+    list_display = ('owner', 'status', 'amount_of_uses', 'amount_of_uses_LEFT',
                     'order_id', 'type_of_service', 'payment_day',
                     'expire_time', 'is_expired', 'id', 'price', 'left_to_pay')
     list_filter = ('type_of_service', 'payment_day', 'is_expired')

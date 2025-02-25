@@ -6,6 +6,7 @@ from pprint import pprint
 # Django imports
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 import django.core.serializers
 from django.utils.dateparse import parse_date
 from rest_framework import status
@@ -82,8 +83,9 @@ class GoogleAuthView(APIView):
 
 
 def updateExistingPasses(client: Client) -> None:
-    client_tickets_in_use = PaymentTicket.objects.filter(owner=client, status='in_use').order_by('-expire_time')
+    client_tickets_in_use = PaymentTicket.objects.filter(owner=client, is_expired=False).order_by('-expire_time')
     for ticket in client_tickets_in_use:
+        print(ticket)
         if timezone.now().date() > ticket.expire_time or ticket.amount_of_uses_LEFT == 0:
             ticket.is_expired = True
             ticket.status = 'expired'
@@ -139,33 +141,6 @@ class Logout(APIView):
         return Response({"message": "Logged out successfully"}, status=200)
 
 
-class ClientsViewDetail(ModelViewSet):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
-    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
-
-    def list(self, request, *args, **kwargs):
-        user_profile = Client.objects.get(pk=request.user.pk)
-        updateExistingPasses(user_profile)
-        serializer = self.get_serializer(user_profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def partial_update(self, request, *args, **kwargs):
-        type_of_service = request.data.get("type_of_service")
-        client = self.get_object()
-
-        updateExistingPasses(client)
-
-        available_passes = discountClientOnePass(client, type_of_service)
-        if available_passes:
-            return Response({
-                "Action": "Pass",
-                "Ticket_used": django.core.serializers.serialize('json', [available_passes])
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
-
-
 class UserBookingViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -175,10 +150,6 @@ class UserBookingViewSet(ViewSet):
         date = parse_date(request.data.get("date"))
         hour = request.data.get("hour")
 
-        pprint("request.data")
-        pprint(request.data)
-        pprint("USER")
-        pprint(client)
 
         if not date:
             return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
@@ -210,25 +181,34 @@ class UserBookingViewSet(ViewSet):
 # ADMIN VIEWS FOR BUSINESS DATA
 
 class AdminAddPassesToClient(ModelViewSet):
-    queryset = PaymentTicket.objects.all()
-    serializer_class = TicketSerializer
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def create(self, request, *args, **kwargs):
+        pprint(request.data)
         type_of_service = request.data.get("type_of_service")
         amount_of_uses = request.data.get("amount_of_uses")
-        client_ticket_pk = request.data.get("client_ticket_pk")
-        owner = Client.objects.get(pk=client_ticket_pk)
+        user_pk = kwargs.get('pk')
+        owner = get_object_or_404(Client, pk=user_pk)
 
-        ticket_data = dict(type_of_service=type_of_service,
-                           amount_of_uses=amount_of_uses,
-                           owner={str(owner.pk)})
+        ticket_data = {
+            "type_of_service": type_of_service,
+            "amount_of_uses": int(amount_of_uses),
+            "owner": owner.pk,
+            "status": "in_use",
+            "is_expired": False,
+        }
 
-        ticket_serializer = self.get_serializer(data=ticket_data)
+        ticket_serializer = TicketSerializer(data=ticket_data)
 
         if ticket_serializer.is_valid():
-            self.perform_create(ticket_serializer)
-            return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
+            ticket_serializer.save()
+            updateExistingPasses(owner)
+            serializer = self.get_serializer(owner)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -272,10 +252,7 @@ class AdminPassesChartData(APIView):
                         value=Booking.objects.filter(date=current_date).count())
                 )
 
-            pprint(passes_per_day)
-            return Response({
-                "chart_data": passes_per_day,
-            }, status=status.HTTP_200_OK)
+            return Response({"chart_data": passes_per_day}, status=status.HTTP_200_OK)
 
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -341,8 +318,6 @@ class AdminTypeOfServiceChartData(APIView):
             start_day = parse_date(request.data.get("start_day"))
             end_day = parse_date(request.data.get("end_day"))
 
-            print("start_day", start_day)
-            print("end_day", end_day)
             free_climbing = 0
             classes = 0
 
@@ -355,10 +330,7 @@ class AdminTypeOfServiceChartData(APIView):
                     elif booking.type_of_service == "classes":
                         classes += 1
 
-            pprint({"chart_data": [
-                {"category": "free climbing", "value": free_climbing},
-                {"category": "classes", "value": classes},
-            ]})
+
 
             return Response({"chart_data": [
                 {"category": "free climbing", "value": free_climbing},
@@ -370,6 +342,35 @@ class AdminTypeOfServiceChartData(APIView):
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AdminGetClientData(ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
+
+    def retrieve(self, request, *args, **kwargs):
+        user_pk = kwargs.get('pk')  # Get 'pk' from the URL
+        user_profile = get_object_or_404(Client, pk=user_pk)
+
+        updateExistingPasses(user_profile)
+        serializer = self.get_serializer(user_profile)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        type_of_service = request.data.get("type_of_service")
+        client = self.get_object()
+
+        updateExistingPasses(client)
+
+        available_passes = discountClientOnePass(client, type_of_service)
+        if available_passes:
+            return Response({
+                "Action": "Pass",
+                "Ticket_used": django.core.serializers.serialize('json', [available_passes])
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
+
 # ADMIN VIEWS FOR SEARCH AND ASSIGN PASSES FOR USERS
 
 class AdminSearchClients(APIView):
@@ -377,8 +378,6 @@ class AdminSearchClients(APIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            pprint(request.query_params)
-            pprint(request.query_params.get("input_value"))
             partial_data = request.query_params.get("input_value")
             clients_found = []
 
@@ -394,13 +393,14 @@ class AdminSearchClients(APIView):
                 if client_found not in clients_found:
                     clients_found.append(client_found)
 
-            pprint(clients_found)
+
             return Response({
                 "clients_found": django.core.serializers.serialize('json', clients_found)
             }, status=status.HTTP_200_OK)
 
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # MERCADO PAGO VIEWS

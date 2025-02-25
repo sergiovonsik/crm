@@ -13,6 +13,9 @@ class TicketSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         print("validated_data:", data)
+        amount_of_uses_LEFT = data.get('amount_of_uses')
+        data['amount_of_uses_LEFT'] = amount_of_uses_LEFT
+        data['order_id'] = "Manually Assigned"
         ticket = PaymentTicket.objects.create(**data)  # Use Client here
         return ticket
 
