@@ -5,7 +5,8 @@ const DonutChartComponent = ({data, title, colors}) => {
     return (
         <div className="p-4 flex items-center justify-center">
             <h2> {title ?  title : "TEST"}</h2>
-            <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center" style={{ width: 350, height: 350 }}>
+            <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center"
+                 style={{ width: 350, height: 350 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie

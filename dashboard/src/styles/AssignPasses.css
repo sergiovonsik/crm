@@ -40,7 +40,7 @@ select {
 button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: rgb(0, 157, 255);
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -51,6 +51,22 @@ button {
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+
+
+.reset-button {
+    width: 100%;
+    padding: 10px;
+    background-color: rgb(248, 199, 10);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 37px;
+}
+.reset-button:hover {
+    box-shadow: 0 0 15px 4px rgba(255, 196, 0, 0.87);
 }
 
 .summary {
@@ -120,12 +136,20 @@ button:disabled {
 .inline-elements {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    justify-content: space-between;
+    width: 100%; /* Ensure it takes the full width */
+}
+
+
+.inner-container {
+    display: flex;
+    align-items: center; /* Align vertically */
 }
 
 .number-box {
     display: inline-block;
-    padding: 20px 40px;
+    padding: 15px 30px;
+    margin: auto 3vw;
     font-size: 50px;
     font-weight: bold;
     color: #f5f5f5; /* Light text */

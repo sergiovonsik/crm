@@ -40,6 +40,8 @@ function Home() {
                 'last_login': data.last_login,
             };
 
+            console.log(res.data)
+
             let booking_tickets = data.bookings;
             booking_tickets.sort((a, b) => new Date(a.date) - new Date(b.date));
             sessionStorage.setItem("bookingFiles", JSON.stringify(booking_tickets)); // Save to sessionStorage

@@ -12,7 +12,7 @@ urlpatterns = [
     # userActions
     path("users/info/", ClientsViewList.as_view(),
          name="users-data"),
-    path("user/me/info/", AdminGetClientData.as_view({'get': 'list'}),
+    path("user/me/info/", UserGetHisData.as_view({'get': 'retrieve'}),
          name="user-data"),
     path("user/book_pass/", UserBookingViewSet.as_view({'post': 'create'}),
          name="user-book-passes"),
@@ -37,16 +37,10 @@ urlpatterns = [
     path("userAdmin/todayPasses/", AdminGetsTodayPasses.as_view(),
          name="today-passes"),
     path("userAdmin/<int:pk>/info/", AdminGetClientData.as_view({'get': 'retrieve',
-                                                                       'put': 'update',
-                                                                       'delete': 'destroy',
-                                                                       'patch': 'partial_update'}),
+                                                                   'put': 'update',
+                                                                   'delete': 'destroy',
+                                                                   'patch': 'partial_update'}),
          name="user-data"),
-    path("userAdmin/<int:pk>/info/", AdminGetClientData.as_view({'get': 'retrieve',
-                                                                       'put': 'update',
-                                                                       'delete': 'destroy',
-                                                                       'patch': 'partial_update'}),
-         name="user-data"),
-
     path("userAdmin/<int:pk>/addPasses/", AdminAddPassesToClient.as_view({'post': 'create'}),
          name="admin-add-passes"),
 

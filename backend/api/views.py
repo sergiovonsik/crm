@@ -150,7 +150,6 @@ class UserBookingViewSet(ViewSet):
         date = parse_date(request.data.get("date"))
         hour = request.data.get("hour")
 
-
         if not date:
             return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -174,6 +173,20 @@ class UserBookingViewSet(ViewSet):
                                                   type_of_service=type_of_service, hour=hour)
 
         return Response({"message": "Class booked successfully"}, status=status.HTTP_201_CREATED)
+
+class UserGetHisData(ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
+
+    def retrieve(self, request, *args, **kwargs):
+        user_profile = request.user
+
+        updateExistingPasses(user_profile)
+        serializer = self.get_serializer(user_profile)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 # ADMIN VIEWS
@@ -330,8 +343,6 @@ class AdminTypeOfServiceChartData(APIView):
                     elif booking.type_of_service == "classes":
                         classes += 1
 
-
-
             return Response({"chart_data": [
                 {"category": "free climbing", "value": free_climbing},
                 {"category": "classes", "value": classes},
@@ -371,6 +382,7 @@ class AdminGetClientData(ModelViewSet):
         else:
             return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
 
+
 # ADMIN VIEWS FOR SEARCH AND ASSIGN PASSES FOR USERS
 
 class AdminSearchClients(APIView):
@@ -393,7 +405,6 @@ class AdminSearchClients(APIView):
                 if client_found not in clients_found:
                     clients_found.append(client_found)
 
-
             return Response({
                 "clients_found": django.core.serializers.serialize('json', clients_found)
             }, status=status.HTTP_200_OK)
@@ -407,7 +418,7 @@ class AdminGetsTodayPasses(APIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            #partial_data = request.query_params.get("input_value")
+            # partial_data = request.query_params.get("input_value")
             print("TODAYS TIME")
             print(timezone.now().date())
             booking_files = Booking.objects.filter(date=timezone.now().date())
@@ -423,10 +434,6 @@ class AdminGetsTodayPasses(APIView):
 
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 # MERCADO PAGO VIEWS
