@@ -3,7 +3,7 @@ from api.models import *
 
 
 # SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
-class IsAdmin(permissions.BasePermission):
+class isAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_staff
 

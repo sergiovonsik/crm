@@ -29,7 +29,7 @@ from datetime import timedelta
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .models import PaymentTicket, Client
 from .permissions import *
-from .serializers import ClientSerializer, TicketSerializer, BookingSerializer
+from .serializers import *
 
 User = get_user_model()
 
@@ -195,7 +195,7 @@ class UserGetHisData(ModelViewSet):
 class AdminAddPassesToClient(ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def create(self, request, *args, **kwargs):
         pprint(request.data)
@@ -227,7 +227,7 @@ class AdminAddPassesToClient(ModelViewSet):
 class AdminTakeAPassForClient(ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def create(self, request, *args, **kwargs):
         client_pk = kwargs.get('pk')
@@ -268,7 +268,7 @@ class AdminTakeAPassForClient(ModelViewSet):
 
 
 class AdminPassesChartData(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -298,7 +298,7 @@ class AdminPassesChartData(APIView):
 
 
 class AdminTicketsChartData(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -323,7 +323,7 @@ class AdminTicketsChartData(APIView):
 
 
 class AdminActiveClientsChartData(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -350,7 +350,7 @@ class AdminActiveClientsChartData(APIView):
 
 
 class AdminTypeOfServiceChartData(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -412,7 +412,7 @@ class AdminGetClientData(ModelViewSet):
 # ADMIN VIEWS FOR SEARCH AND ASSIGN PASSES FOR USERS
 
 class AdminSearchClients(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def get(self, request, *args, **kwargs):
         try:
@@ -440,7 +440,7 @@ class AdminSearchClients(APIView):
 
 
 class AdminGetsTodayPasses(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, isAdmin]
 
     def get(self, request, *args, **kwargs):
         try:
@@ -583,3 +583,53 @@ class MercadoPagoSuccesHook(APIView):
             return Response(status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_202_ACCEPTED)
+
+
+class AdminSetPrices(APIView):
+    permission_classes = [IsAuthenticated, isAdmin]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            pprint(request.data)
+            price = int(request.data.get('price'))
+            pass_amount = int(request.data.get('pass_amount'))
+            type_of_service = request.data.get('type_of_service')
+            data = dict(price=price, pass_amount=pass_amount, type_of_service=type_of_service)
+
+            serialized_data = MPSerializer(data=data)
+            check_valid = serialized_data.is_valid()
+            if check_valid:
+                serialized_data.save()
+                existing_prices = MPPassPrice.objects.all()
+                serialize_prices = MPSerializer(existing_prices, many=True)
+
+                return Response({"existing_prices": serialize_prices.data}, status=status.HTTP_200_OK)
+            else:
+                print(serialized_data.errors)
+                return Response({serialized_data.errors}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, priceId):
+        try:
+            print(priceId)
+            instance_id = int(priceId)
+            object_instance = MPPassPrice.objects.get(id=instance_id)
+            object_instance.delete()
+
+            existing_prices = MPPassPrice.objects.all()
+            serialize_prices = MPSerializer(existing_prices, many=True)
+
+            return Response({"existing_prices": serialize_prices.data}, status=status.HTTP_200_OK)
+        except MPPassPrice.DoesNotExist:
+            return Response({"error": "Price not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class AdminShowAllPrices(ModelViewSet):
+    queryset = MPPassPrice.objects.all()
+    serializer_class = MPSerializer
+    permission_classes = [IsAuthenticated, isAdmin]

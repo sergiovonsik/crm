@@ -22,6 +22,13 @@ urlpatterns = [
          name="mercadopago"),
     path("mercadopago/succes-hook/", MercadoPagoSuccesHook.as_view(),
          name='webhook'),
+    path("mercadopago/set_price/<int:priceId>/", AdminSetPrices.as_view(),
+         name='delete_price'),
+    path("mercadopago/set_price/", AdminSetPrices.as_view(),
+         name='set_price'),
+
+    path("mercadopago/show_all_prices/", AdminShowAllPrices.as_view({'get': 'list'}),
+         name='set_price'),
 
     # adminActions
     path("userAdmin/BookingChart/", AdminPassesChartData.as_view(),

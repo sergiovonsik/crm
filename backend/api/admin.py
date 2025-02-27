@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Client, PaymentTicket, Booking
+from .models import *
 
 
 # Register the Client model with a custom admin interface
@@ -27,7 +27,12 @@ class PaymentTicketAdmin(admin.ModelAdmin):
     search_fields = ('owner__username', 'type_of_service')
     ordering = ('expire_time', 'amount_of_uses_LEFT')
 
+
 # Register the PaymentTicket model
+@admin.register(MPPassPrice)
+class PaymentTicketAdmin(admin.ModelAdmin):
+    list_display = ('price', 'pass_amount', 'type_of_service')
+
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('client', 'ticket', 'date', 'type_of_service', 'hour', 'created_at')

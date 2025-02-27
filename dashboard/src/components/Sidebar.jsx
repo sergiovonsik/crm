@@ -27,6 +27,9 @@ const Sidebar = () => {
                 <Link to="/booking_for_today">{isOpen ? "Bookings for today" : ""}</Link>
               </li>
               <li>
+                <Link to="/set_new_price">{isOpen ? "Set a new price" : " "}</Link>
+              </li>
+              <li>
                 <Link to="/logout">{isOpen ? "Logout" : " "}</Link>
               </li>
             </ul>

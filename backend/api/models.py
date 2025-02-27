@@ -87,7 +87,10 @@ class Booking(models.Model):
 class MPPassPrice(models.Model):
     pass_amount = models.IntegerField()
     price = models.IntegerField()
-    type_of_service = models.CharField(max_length=30)
+    type_of_service = models.CharField(
+        max_length=30,
+        choices=[('classes', 'classes'), ('free_climbing', 'free_climbing')],
+    )
 
     def __str__(self):
         return (f"Booking #{self.pk} | Price: {self.price} | Amount: {self.pass_amount} | \n"

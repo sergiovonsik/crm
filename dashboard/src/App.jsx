@@ -1,14 +1,14 @@
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom"
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import BusinessData from "./pages/BusinessData.jsx"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import SearchUser from "./pages/SearchUser.jsx";
-import BookPass from "./pages/BookingsForToday.jsx";
-import api from "./api";
 import BookingsForToday from "./pages/BookingsForToday.jsx";
+import SetNewPrice from "./pages/SetNewPrice.jsx";
+import api from "./api";
 
 const Logout = () => {
   useEffect(() => {
@@ -61,6 +61,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BookingsForToday />
+              </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/set_new_price"
+            element={
+              <ProtectedRoute>
+                <SetNewPrice />
               </ProtectedRoute>
             }
         />

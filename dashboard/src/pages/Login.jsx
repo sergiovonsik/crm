@@ -1,4 +1,4 @@
-import Form from "../components/Form"
+import LoginRegisterForm from "../components/LoginRegisterForm.jsx"
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"
 
@@ -12,7 +12,7 @@ function Login() {
             Don’t have an account? Register
           </p>
           <div>
-            <Form route={route} method="login"/>
+            <LoginRegisterForm route={route} method="login"/>
           </div>
         </div>
       </>

@@ -8,7 +8,7 @@ import GoogleLoginButton from "../components/GoogleLoginButton"
 import PropTypes from "prop-types";
 
 
-function Form({ route, method }) {
+function LoginRegisterForm({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
@@ -73,9 +73,9 @@ function Form({ route, method }) {
     );
 }
 
-Form.propTypes = {
+LoginRegisterForm.propTypes = {
     route: PropTypes.string.isRequired,
     method: PropTypes.string.isRequired,
 };
 
-export default Form
+export default LoginRegisterForm
