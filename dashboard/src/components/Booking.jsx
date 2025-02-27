@@ -10,6 +10,7 @@ const Booking = ({booking}) => {
         ticket,
         type_of_service,
         created_at,
+        client_username,
     } = booking;
     const [is_expired, setIsExpired] = useState(false);
 
@@ -31,7 +32,7 @@ const Booking = ({booking}) => {
 
     return (
         <div className={`booking ${is_expired ? "used" : "pending"}`}>
-            <span><strong>ID:</strong> {id}</span>
+            <span><strong>Username:</strong> {client_username}</span>
             {type_of_service === "classes" && <span><strong>Hour:</strong> {hour}</span>}
             <span><strong>Date:</strong> {date}</span>
             <span><strong>Ticket:</strong> {ticket}</span>
@@ -50,6 +51,7 @@ Booking.propTypes = {
         ticket: PropTypes.number.isRequired,
         type_of_service: PropTypes.string.isRequired,
         created_at: PropTypes.string.isRequired,
+        client_username: PropTypes.string.isRequired,
     }).isRequired,
 };
 

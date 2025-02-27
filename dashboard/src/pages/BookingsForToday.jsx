@@ -1,24 +1,15 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import "../styles/AssignPasses.css";
+import "../styles/SearchUser.css";
 import Booking from "../components/Booking.jsx";
 import api from "../api.js";
 
 function BookingsForToday() {
     const [bookings, setBookings] = useState([]);
+    const [numberOfClosedItems, setNumberOfClosedItems] = useState(0);
 
     useEffect(() => {
-        const storedBookings = sessionStorage.getItem("bookingFiles");
-
-        if (!storedBookings) {
             getBookingData();
-        } else {
-            setBookings(JSON.parse(storedBookings));
-        }
-
-        if (!sessionStorage.getItem("numberOfClosedItems")) {
-            sessionStorage.setItem("numberOfClosedItems", JSON.stringify(0));
-        }
     }, []);
 
     const getBookingData = async () => {
@@ -26,12 +17,15 @@ function BookingsForToday() {
             const res = await api.get(`api/userAdmin/todayPasses/`);
             const bookingData = res.data.booking_files;
 
-            sessionStorage.setItem("bookingFiles", JSON.stringify(bookingData));
-            sessionStorage.setItem("numberOfClosedItems", JSON.stringify(0));
+            console.log(res.data);
+
+            setNumberOfClosedItems(0);
             setBookings(bookingData);
         } catch (err) {
-            console.error("Error fetching tickets:", err);
+            console.error("Error fetching Bookings:", err);
             alert("Failed to load tickets.");
+            setNumberOfClosedItems(0);
+            setBookings([]);
         }
     };
 
@@ -39,13 +33,9 @@ function BookingsForToday() {
         const userConfirmed = window.confirm("Are you sure you want to close the notification?");
         if (userConfirmed) {
             console.log("User confirmed!");
-
-            const storedBookings = JSON.parse(sessionStorage.getItem("bookingFiles")) || [];
-            const numberOfClosedItems = JSON.parse(sessionStorage.getItem("numberOfClosedItems"));
-            const newBookingFiles = storedBookings.filter(booking => booking.id !== id);
-
-            sessionStorage.setItem("bookingFiles", JSON.stringify(newBookingFiles));
-            sessionStorage.setItem("numberOfClosedItems", JSON.stringify(numberOfClosedItems + 1));
+            const newBookingFiles = bookings.filter(booking => booking.id !== id);
+            setBookings(newBookingFiles);
+            setNumberOfClosedItems(numberOfClosedItems + 1)
 
             setBookings(newBookingFiles);
         }
@@ -70,7 +60,7 @@ function BookingsForToday() {
                     </div>
                     <div className="inner-container">
                         <div className="title">Already checked:</div>
-                        <div className="number-box">{sessionStorage.getItem("numberOfClosedItems")}</div>
+                        <div className="number-box">{numberOfClosedItems}</div>
                     </div>
 
                 </div>

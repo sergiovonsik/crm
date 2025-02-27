@@ -25,7 +25,7 @@ const Logout = () => {
     };
 
     logoutUser();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, ); // Empty dependency array means this runs once on component mount
 
   return <Navigate to="/login" />;
 };

@@ -43,5 +43,7 @@ urlpatterns = [
          name="user-data"),
     path("userAdmin/<int:pk>/addPasses/", AdminAddPassesToClient.as_view({'post': 'create'}),
          name="admin-add-passes"),
+    path("userAdmin/<int:pk>/takeAPass/", AdminTakeAPassForClient.as_view({'post': 'create'}),
+         name="admin-take-pass"),
 
 ]

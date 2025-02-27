@@ -79,5 +79,19 @@ class Booking(models.Model):
         return (f"Booking #{self.pk} | Client: {self.client.username} | Ticket: {self.ticket.pk} | \n"
                 f"Date: {self.date} | Created At: {self.created_at} | \n"
                 f"Activity Type: {self.type_of_service} | Hours: {self.hour}")
+
     class Meta:
         unique_together = ('client', 'date')  # Prevent duplicate bookings per day
+
+
+class MPPassPrice(models.Model):
+    pass_amount = models.IntegerField()
+    price = models.IntegerField()
+    type_of_service = models.CharField(max_length=30)
+
+    def __str__(self):
+        return (f"Booking #{self.pk} | Price: {self.price} | Amount: {self.pass_amount} | \n"
+                f"Activity Type: {self.type_of_service} |")
+
+    class Meta:
+        unique_together = ('pass_amount', 'type_of_service')  # Prevent duplicate bookings per day

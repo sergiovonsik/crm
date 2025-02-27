@@ -21,7 +21,7 @@ const Sidebar = () => {
                 <Link to="/">{isOpen ? "Business's Data" : ""}</Link>
               </li>
               <li>
-                <Link to="/assign_passes">{isOpen ? "Provide Passes" : ""}</Link>
+                <Link to="/search_user">{isOpen ? "Search Users" : ""}</Link>
               </li>
               <li>
                 <Link to="/booking_for_today">{isOpen ? "Bookings for today" : ""}</Link>

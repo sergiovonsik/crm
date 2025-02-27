@@ -1,7 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import PaymentTicket, Client, Booking
+from .models import PaymentTicket, Client, Booking, MPPassPrice
 from rest_framework.serializers import models
+
+
+class MPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MPPassPrice
+        fields = '__all__'
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -22,10 +28,11 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class BookingSerializer(serializers.ModelSerializer):
     client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    client_username = serializers.CharField(source='client.username', read_only=True)
 
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = ['id', 'client_username', 'client', 'date', 'created_at', 'type_of_service', 'hour', 'ticket']
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -45,4 +52,3 @@ class ClientSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = Client.objects.create_user(**validated_data)  # Use Client here
         return user
-

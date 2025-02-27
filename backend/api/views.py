@@ -85,7 +85,6 @@ class GoogleAuthView(APIView):
 def updateExistingPasses(client: Client) -> None:
     client_tickets_in_use = PaymentTicket.objects.filter(owner=client, is_expired=False).order_by('-expire_time')
     for ticket in client_tickets_in_use:
-        print(ticket)
         if timezone.now().date() > ticket.expire_time or ticket.amount_of_uses_LEFT == 0:
             ticket.is_expired = True
             ticket.status = 'expired'
@@ -174,6 +173,7 @@ class UserBookingViewSet(ViewSet):
 
         return Response({"message": "Class booked successfully"}, status=status.HTTP_201_CREATED)
 
+
 class UserGetHisData(ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
@@ -186,7 +186,6 @@ class UserGetHisData(ModelViewSet):
         serializer = self.get_serializer(user_profile)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 # ADMIN VIEWS
@@ -226,24 +225,46 @@ class AdminAddPassesToClient(ModelViewSet):
 
 
 class AdminTakeAPassForClient(ModelViewSet):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    def partial_update(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
+        client_pk = kwargs.get('pk')
+        client = get_object_or_404(Client, pk=client_pk)
         type_of_service = request.data.get("type_of_service")
-        client = self.get_object()
+        date = parse_date(request.data.get("date"))
+        hour = request.data.get("hour")
 
         updateExistingPasses(client)
 
+        # Check for existing passes
+
+        if Booking.objects.filter(client=client, date=date):
+            return Response({'error': 'You cant create '
+                                      'to Booking Tickets for the same date'},
+                            status=status.HTTP_403_FORBIDDEN)
+
         available_passes = discountClientOnePass(client, type_of_service)
         if available_passes:
-            return Response({
-                "Action": "OK",
-                "Ticket_used": django.core.serializers.serialize('json', [available_passes])
-            }, status=status.HTTP_200_OK)
+
+            serializer = self.get_serializer(data=dict(client=client.pk,
+                                                       type_of_service=type_of_service,
+                                                       ticket=available_passes.pk,
+                                                       date=date))
+            if serializer.is_valid():
+                booking = serializer.save()
+                updateExistingPasses(client)
+                serializer = ClientSerializer(client).data
+
+                return Response(serializer, status=status.HTTP_201_CREATED)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"Action": "No passes left"}, status=status.HTTP_200_OK)
+            return Response(
+                {"error": "No available passes for this client."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class AdminPassesChartData(APIView):
@@ -262,7 +283,12 @@ class AdminPassesChartData(APIView):
                 passes_per_day.append(
                     dict(
                         date=str(current_date),
-                        value=Booking.objects.filter(date=current_date).count())
+                        value=Booking.objects.filter(date=current_date).count(),
+                        free_climb_value=Booking.objects.filter(date=current_date,
+                                                                type_of_service="free_climbing").count(),
+                        classes_value=Booking.objects.filter(date=current_date,
+                                                             type_of_service="classes").count(),
+                    )
                 )
 
             return Response({"chart_data": passes_per_day}, status=status.HTTP_200_OK)
@@ -423,11 +449,13 @@ class AdminGetsTodayPasses(APIView):
             print(timezone.now().date())
             booking_files = Booking.objects.filter(date=timezone.now().date())
 
-            for booking in booking_files:
-                print(booking.id)
-                print(booking.date)
+            pprint("booking_files")
+            pprint(booking_files)
 
             serialized_data = BookingSerializer(booking_files, many=True).data
+
+            print("serialized_data")
+            pprint(serialized_data)
 
             return Response({"booking_files": serialized_data}, status=status.HTTP_200_OK)
 

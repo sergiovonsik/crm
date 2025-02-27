@@ -5,26 +5,34 @@ import { useState, useEffect } from "react";
 const Booking = ({booking}) => {
     const {
         id,
-        client,
         date,
         hour,
         ticket,
         type_of_service,
         created_at,
+        client_username,
     } = booking;
     const [is_expired, setIsExpired] = useState(false);
 
     useEffect(() => {
+        if (!date) return;
+
         const today = new Date();
-        const bookingDate = new Date(date);
+        today.setHours(0, 0, 0, 0);
+        const bookingDate = new Date(date + "T00:00:00"); // Forces local time
+        bookingDate.setHours(0, 0, 0, 0);
+
         if (bookingDate < today) {
             setIsExpired(true);
+        } else {
+            setIsExpired(false);
         }
     }, [date]);
 
+
     return (
         <div className={`booking ${is_expired ? "used" : "pending"}`}>
-            <span><strong>ID:</strong> {id}</span>
+            <span><strong>Username:</strong> {client_username}</span>
             {type_of_service === "classes" && <span><strong>Hour:</strong> {hour}</span>}
             <span><strong>Date:</strong> {date}</span>
             <span><strong>Ticket:</strong> {ticket}</span>
@@ -43,6 +51,7 @@ Booking.propTypes = {
         ticket: PropTypes.number.isRequired,
         type_of_service: PropTypes.string.isRequired,
         created_at: PropTypes.string.isRequired,
+        client_username: PropTypes.string.isRequired,
     }).isRequired,
 };
 

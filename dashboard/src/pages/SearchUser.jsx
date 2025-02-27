@@ -2,11 +2,12 @@ import {useEffect, useState} from "react";
 import Sidebar from "../components/Sidebar";
 import SelectedUserData from "../components/SelectedUserData.jsx";
 import AssignmentForm from "../components/AssignmentForm.jsx";
-import "../styles/AssignPasses.css";
+import TakeAPassForm from "../components/TakeAPassForm.jsx";
+import "../styles/SearchUser.css";
 import api from "../api.js";
 
 
-function AssignPasses() {
+function SearchUser() {
     const [inputValue, setInputValue] = useState("");
     const [usersFound, setUsersFound] = useState([]);
     const [userIsSelected, setUsersIsSelected] = useState(false);
@@ -15,7 +16,6 @@ function AssignPasses() {
     const [ticketsFilter, setTicketsFilter] = useState(true);
     const [bookingFiles, setBookingFiles] = useState([]);
     const [bookingFilter, setBookingFilter] = useState(true);
-    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         if (userIsSelected) {
@@ -119,7 +119,7 @@ function AssignPasses() {
         </div>
     )
 
-    const AssignUserMenu = (
+    const FoundUserMenu = (
     <div>
         <button className="form-button" onClick={() => {
             setUsersIsSelected(false);
@@ -128,8 +128,18 @@ function AssignPasses() {
         }}>
             Go Back
         </button>
-        <div className="title">Assign passes to user:</div>
-        < AssignmentForm selectedUserData={selectedUserData} setSelectedUserData={setSelectedUserData}  />
+
+        <div className="inline-elements">
+            <div className="inner-container">
+                < AssignmentForm selectedUserData={selectedUserData} setSelectedUserData={setSelectedUserData}/>
+            </div>
+            <div className="inner-container">
+
+                < TakeAPassForm selectedUserData={selectedUserData} setSelectedUserData={setSelectedUserData}/>
+            </div>
+
+        </div>
+
         <div>
             <SelectedUserData
                 selectedUserData={selectedUserData}
@@ -149,11 +159,11 @@ function AssignPasses() {
             <Sidebar />
             <div className="main-content">
                 <div>
-                    {userIsSelected ? AssignUserMenu : searchUserMenu }
+                    {userIsSelected ? FoundUserMenu : searchUserMenu }
                 </div>
             </div>
         </div>
     );
 }
 
-export default AssignPasses;
+export default SearchUser;

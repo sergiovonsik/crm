@@ -26,9 +26,21 @@
   background-color: #1e3d29; /* Dark green background */
 }
 
+.ticket.valid:hover {
+  box-shadow: 0 0 10px 2px rgba(59, 172, 36, 0.75);
+  border-color: #4dd350; /* Green border */
+  background-color: #297047; /* Dark green background */
+}
+
 .ticket.expired {
   border-color: #c0392b; /* Red border */
   background-color: #3d1e1e; /* Dark red background */
+}
+
+.ticket.expired:hover {
+  box-shadow: 0 0 10px 2px rgba(197, 23, 0, 0.75);
+  border-color: #ed2211; /* Red border */
+  background-color: #5c2525; /* Dark red background */
 }
 
 .status {

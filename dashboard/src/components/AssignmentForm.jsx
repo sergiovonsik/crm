@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import {useState} from "react";
 
 function AssignmentForm({selectedUserData, setSelectedUserData}) {
-    const [refresh, setRefresh] = useState(0);
+    const [error, setError] = useState(null);
+
     const {
         register,
         handleSubmit,
@@ -21,38 +22,46 @@ function AssignmentForm({selectedUserData, setSelectedUserData}) {
             let userData = res.data
             userData.pk = res.data.id
             setSelectedUserData(userData);
-            setRefresh(refresh + 1);
 
 
 
 
         } catch (err) {
-            console.error("Error sending data:", err);
-            alert("Failed to send data.");
+            console.error("Error sending data:", err.response);
+            setError(err.response.data.error)
         }
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <select {...register("type_of_service", { required: "This field is required" })}>
-                <option value="classes">Classes</option>
-                <option value="free_climbing">Free Climbing</option>
-            </select>
-            {errors.type_of_service && <p>{errors.type_of_service.message}</p>}
+        <div>
+            <div className="title">Assign passes to user:</div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <select {...register("type_of_service", { required: "This field is required" })}>
+                    <option value="classes">Classes</option>
+                    <option value="free_climbing">Free Climbing</option>
+                </select>
+                {errors.type_of_service && <p>{errors.type_of_service.message}</p>}
 
-            <input
-                type="number"
-                placeholder="Amount of passes to add"
-                {...register("amount_of_uses", {
-                    required: "This field is required",
-                    min: { value: 1, message: "Minimum value is 1" },
-                    max: { value: 32, message: "Maximum value is 32" }
-                })}
-            />
-            {errors.amount_of_uses && <p>{errors.amount_of_uses.message}</p>}
+                <input
+                    type="number"
+                    placeholder="Amount of passes to add"
+                    {...register("amount_of_uses", {
+                        required: "This field is required",
+                        min: { value: 1, message: "Minimum value is 1" },
+                        max: { value: 32, message: "Maximum value is 32" }
+                    })}
+                />
+                {errors.amount_of_uses && <p>{errors.amount_of_uses.message}</p>}
 
-            <input type="submit" value="Submit" />
-        </form>
+                <input type="submit" value="Submit" />
+            </form>
+            {error !== null &&
+                <div className="error-message">
+                    {error}
+                </div>
+            }
+
+        </div>
     );
 }
 

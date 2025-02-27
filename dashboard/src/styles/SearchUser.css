@@ -69,6 +69,12 @@ button:disabled {
     box-shadow: 0 0 15px 4px rgba(255, 196, 0, 0.87);
 }
 
+.reset-button:active {
+    background-color: rgb(179, 147, 17); /* Darker yellow when pressed */
+    box-shadow: 0 0 15px 4px rgba(255, 128, 0, 0.87);
+    transform: scale(0.95); /* Slightly shrink the button */
+}
+
 .summary {
     margin-top: 20px;
     text-align: center;
@@ -89,6 +95,7 @@ button:disabled {
         background-color: #333;
         color: #f0f0f0;
         border: 1px solid #555;
+        margin: 8px auto auto;
     }
 
     button {
@@ -103,6 +110,18 @@ button:disabled {
 .error-message {
     border: 1px solid #c0392b; /* Red border */
     background-color: #3d1e1e; /* Dark red background */
+    color: #f0f0f0; /* Light text for visibility */
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center; /* Center the text inside */
+    max-width: 400px; /* Restrict width for better layout */
+    margin: 20px auto; /* Center the element horizontally */
+    font-size: 14px;
+}
+
+.success-message {
+    border: 1px solid rgba(24, 149, 25, 0.91); /* Red border */
+    background-color: #126c00; /* Dark red background */
     color: #f0f0f0; /* Light text for visibility */
     padding: 10px;
     border-radius: 4px;

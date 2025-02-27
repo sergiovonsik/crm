@@ -20,19 +20,27 @@
 }
 
 .form-button {
-  width: 95%;
-  padding: 10px;
+  width: auto;
+  padding: 13px 16px;
   margin: 20px 0;
-  background-color: #007bff;
-  color: white;
+  background-color: #ffb804;
+  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  font-size: medium;
+
 }
 
 .form-button:hover {
-  background-color: #0056b3;
+  background-color: rgb(253, 232, 2);
+  box-shadow: 0 4px 4px rgba(255, 183, 0, 0.78);
+}
+
+.form-button:active {
+  background-color: rgba(216, 156, 11, 0.94);
+  box-shadow: 0 4px 4px rgba(255, 196, 0, 0.82);
 }
 
 .reister-button {

@@ -12,10 +12,15 @@ function SelectedUserData({selectedUserData, paymentTickets, bookingFiles, setTi
     }
 
     function showPendingBookings(bookings = bookingFiles) {
-        const today = new Date()
-        ;return bookings
-            .filter(booking => new Date(booking.date) >= today)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
+        return bookings.filter(booking => {
+            const bookingDate = new Date(booking.date + "T00:00:00"); // Forces local time
+            bookingDate.setHours(0, 0, 0, 0);
+
+            return bookingDate >= today; // Faltaba el `return`
+        });
     }
 
     return (
