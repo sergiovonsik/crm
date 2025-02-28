@@ -551,8 +551,8 @@ class MercadoPagoSuccesHook(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        merchant_order_url = request.data.get("data", {}).get("id")
-        topic = request.data.get("data", {}).get("topic")
+        merchant_order_url = request.data.get("resource")
+        topic = request.data.get("topic")
 
         if topic == "merchant_order":
 
