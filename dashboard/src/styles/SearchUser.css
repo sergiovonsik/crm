@@ -1,51 +1,63 @@
 /* Dashboard.css */
 
-body {
-    background-color: #f0f0f0;
-    color: #333;
-    font-family: Arial, sans-serif;
+/* General styles */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-.dashboard {
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 8px;
+body {
+    background-color: #f0f0f0;
+    color: #c8c3c3;
+    font-family: Arial, sans-serif;
+    font-size: 1rem; /* 16px by default */
 }
 
+/* Dashboard container */
+.dashboard {
+    max-width: 60rem; /* 960px */
+    margin: 3rem auto;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+/* Titles */
 .title {
-    font-size: x-large;
+    font-size: 1.30rem;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
+/* Form elements */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
 }
 
 select {
     width: 100%;
-    padding: 8px;
+    padding: 0.5rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 0.25rem;
 }
 
+/* Buttons */
 button {
     width: 100%;
-    padding: 10px;
+    padding: 0.625rem; /* 10px */
     background-color: rgb(0, 157, 255);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 button:disabled {
@@ -53,34 +65,35 @@ button:disabled {
     cursor: not-allowed;
 }
 
-
-
+/* Reset button */
 .reset-button {
-    width: 100%;
-    padding: 10px;
+    width: fit-content;
+    padding: 0.625rem;
     background-color: rgb(250, 165, 7);
     color: #000;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 1.75rem;
 }
-.reset-button:hover {
-    box-shadow: 0 0 15px 4px rgba(255, 196, 0, 0.87);
 
+.reset-button:hover {
+    box-shadow: 0 0 0.9375rem 0.25rem rgba(255, 196, 0, 0.87);
 }
 
 .reset-button:active {
-    background-color: rgb(244, 140, 2); /* Darker yellow when pressed */
-    box-shadow: 0 0 15px 4px rgba(255, 128, 0, 0.87);
-    transform: scale(0.95); /* Slightly shrink the button */
+    background-color: rgb(244, 140, 2);
+    box-shadow: 0 0 0.9375rem 0.25rem rgba(255, 128, 0, 0.87);
+    transform: scale(0.95);
 }
 
+/* Summary */
 .summary {
-    margin-top: 20px;
+    margin-top: 1.25rem;
     text-align: center;
 }
 
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #181818;
@@ -89,14 +102,14 @@ button:disabled {
 
     .dashboard {
         background-color: #242424;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0.625rem rgba(255, 255, 255, 0.1);
     }
 
     select {
         background-color: #333;
         color: #f0f0f0;
         border: 1px solid #555;
-        margin: 8px auto auto;
+        margin: 0.5rem auto auto;
     }
 
     button {
@@ -108,95 +121,96 @@ button:disabled {
     }
 }
 
+/* Messages */
+.error-message,
+.success-message {
+    border: 1px solid;
+    padding: 0.625rem;
+    border-radius: 0.25rem;
+    text-align: center;
+    max-width: 25rem;
+    margin: 1.25rem auto;
+    font-size: 0.875rem;
+}
+
 .error-message {
-    border: 1px solid #c0392b; /* Red border */
-    background-color: #3d1e1e; /* Dark red background */
-    color: #f0f0f0; /* Light text for visibility */
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center; /* Center the text inside */
-    max-width: 400px; /* Restrict width for better layout */
-    margin: 20px auto; /* Center the element horizontally */
-    font-size: 14px;
+    border-color: #c0392b;
+    background-color: #3d1e1e;
+    color: #f0f0f0;
 }
 
 .success-message {
-    border: 1px solid rgba(24, 149, 25, 0.91); /* Red border */
-    background-color: #126c00; /* Dark red background */
-    color: #f0f0f0; /* Light text for visibility */
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center; /* Center the text inside */
-    max-width: 400px; /* Restrict width for better layout */
-    margin: 20px auto; /* Center the element horizontally */
-    font-size: 14px;
+    border-color: rgba(24, 149, 25, 0.91);
+    background-color: #126c00;
+    color: #f0f0f0;
 }
 
+/* User List */
 .user-list-container {
     background-color: #333;
     color: #f0f0f0;
-    padding: 10px;
-    width: auto;
+    padding: 0.625rem;
+    border-radius: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
 }
 
 .user-box {
-    padding: 10px;
-    border-radius: 5px;
+    padding: 0.625rem;
+    border-radius: 0.3125rem;
     background-color: #444;
     transition: box-shadow 0.3s ease-in-out;
 }
 
 .user-box:hover {
-    box-shadow: 0 0 10px 2px rgba(255, 196, 0, 0.82);
+    box-shadow: 0 0 0.625rem 0.125rem rgba(255, 196, 0, 0.82);
 }
 
-.inline-elements {
-    display: flex;
-    width: fit-content;
-    height: fit-content;
-    text-align: center;
-    margin: 0 auto;
-}
-
-
-.inner-container {
-    flex: 1; /* Each takes half the space */
-    display: flex;
-    flex-direction: column; /* Stack child containers vertically */
-    gap: 10px; /* Optional: space between child containers */
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-
+/* Inline Elements */
+.inline-elements,
 .refresh-inline-elements {
     display: flex;
-    width: fit-content;
-    height: fit-content;
-    margin: 0 auto;
-    gap: 5vw;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
 }
 
-
+/* Containers */
+.inner-container,
 .refresh-inner-container {
-    flex: 1; /* Each takes half the space */
-    gap: 10px; /* Optional: space between child containers */
-    padding: 20px;
-    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1.25rem;
 }
 
+
+.box-counting-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 0.625rem;
+    padding: 1.25rem;
+}
+
+/* Number Box */
 .number-box {
     display: inline-block;
-    padding: 15px 30px;
-    margin: auto 3vw;
-    font-size: 50px;
+    padding: 0.93rem 1.87rem;
+    margin: 0 1rem;
+    font-size: 3.125rem;
     font-weight: bold;
-    color: #f5f5f5; /* Light text */
-    background-color: #222; /* Dark background */
-    border: 5px solid rgba(255, 196, 0, 0.82); /* Yellow border */
-    border-radius: 20px; /* Rounded corners */
+    color: #f5f5f5;
+    background-color: #222;
+    border: 0.3125rem solid rgba(234, 181, 8, 0.82);
+    border-radius: 0.5rem;
     text-align: center;
+}/* Number Box */
+.number-box:hover {
+    color: #f5f5f5;
+    background-color: #3a3a3a;
+    box-shadow:  0 0 0.625rem 0.125rem #fdd400;
+    border: 0.3125rem solid rgb(255, 197, 11);
 }

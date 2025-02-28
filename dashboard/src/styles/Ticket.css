@@ -2,14 +2,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
-  margin: 10px 0;
-  border-radius: 10px;
+  padding: 0.75rem 1.25rem; /* Usa rem en vez de px */
+  margin: 0.625rem 0; /* Equivale a 10px */
+  border-radius: 0.625rem; /* Equivale a 10px */
   border: 2px solid;
-  font-size: 16px;
+  font-size: 1rem; /* 16px */
   background-color: #222; /* Dark background */
   font-family: Arial, sans-serif;
   color: #ddd; /* Light text for readability */
+  transition: all 0.3s ease-in-out; /* Transiciones suaves */
 }
 
 .ticket span {
@@ -27,33 +28,33 @@
 }
 
 .ticket.valid:hover {
-  box-shadow: 0 0 10px 2px rgba(59, 172, 36, 0.75);
-  border-color: #4dd350; /* Green border */
-  background-color: #297047; /* Dark green background */
+  box-shadow: 0 0 0.625rem 0.125rem rgba(59, 172, 36, 0.75);
+  border-color: #4dd350;
+  background-color: #297047;
 }
 
 .ticket.expired {
-  border-color: #c0392b; /* Red border */
-  background-color: #3d1e1e; /* Dark red background */
+  border-color: #c0392b;
+  background-color: #522222; /* Ajustado para mejor contraste */
 }
 
 .ticket.expired:hover {
-  box-shadow: 0 0 10px 2px rgba(197, 23, 0, 0.75);
-  border-color: #ed2211; /* Red border */
-  background-color: #5c2525; /* Dark red background */
+  box-shadow: 0 0 0.625rem 0.125rem rgba(197, 23, 0, 0.75);
+  border-color: #ed2211;
+  background-color: #6d2c2c; /* Más legible */
 }
 
 .status {
   font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 0.3125rem 0.625rem;
+  border-radius: 0.3125rem;
   color: white;
 }
 
 .valid .status {
-  background-color: #27ae60; /* Green status */
+  background-color: #27ae60;
 }
 
 .expired .status {
-  background-color: #c0392b; /* Red status */
+  background-color: #c0392b;
 }

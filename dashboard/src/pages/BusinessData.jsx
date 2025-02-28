@@ -99,22 +99,28 @@ function BusinessData() {
                 <RangeSlider rangeOfDates={rangeOfDates}
                              setRangeOfDates={setRangeOfDates}
                              resetParameters={fetchAllChartData}/>
-                <h2>Clients Insights</h2>
-                <div className="donut-container">
-                    <div className="donut-box">
-                        <DonutChartComponent title={'Services Used'}
-                                             data={typeOfServiceChart}
-                                             colors={["#7b00ff", "#1248a7", "#ffdf04", "#c80a18"]}/>
-                    </div>
-                    <div className="donut-box">
-                        <DonutChartComponent title={'Active Clients'}
-                                             data={activeClientsChart}
-                                             colors={["#20568c", "#f85b07", "#bf1d05", "#690fc8"]}/>
+                <div className="business-data-container">
+                    <h2>Clients Insights</h2>
+                    <div className="chart-container">
+                        <div className="donut-box">
+                            <DonutChartComponent title={'Services Used'}
+                                                 data={typeOfServiceChart}
+                                                 colors={["#7b00ff", "#1248a7", "#ffdf04", "#c80a18"]}/>
+                        </div>
+                        <div className="donut-box">
+                            <DonutChartComponent title={'Active Clients'}
+                                                 data={activeClientsChart}
+                                                 colors={["#20568c", "#f85b07", "#bf1d05", "#690fc8"]}/>
+                        </div>
                     </div>
                 </div>
-                <LineChartComponent title={'Bookings'} chartData={bookingChart} lineColor={"#f1c40f"}/>
+                <div>
+                    <LineChartComponent title={'Bookings'} chartData={bookingChart} lineColor={"#f1c40f"}/>
+                </div>
+                <div>
+                    <LineChartComponent title={'Tickets Bought'} chartData={ticketChart} lineColor={"#7b00ff"}/>
+                </div>
 
-                <LineChartComponent title={'Tickets Bought'} chartData={ticketChart} lineColor={"#7b00ff"}/>
             </div>
         </div>
     );

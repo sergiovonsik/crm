@@ -12,10 +12,10 @@ function LineChartComponent({ chartData, lineColor, title }) {
     }, [chartData]);
 
     return (
-        <div className="p-4">
+        <div className="line-chart-container">
             {/* Line Chart */}
-            <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-                <h2 className="text-xl font-semibold mb-2">Performance of {title} over time</h2>
+            <div className="chart-wrapper">
+                <h2 className="chart-title">Performance of {title} over time</h2>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <XAxis dataKey="date" />
@@ -31,7 +31,6 @@ function LineChartComponent({ chartData, lineColor, title }) {
                                       stroke="#0077ff" strokeWidth={3} strokeOpacity={1} />
                                 <Line type="monotone" dataKey="classes_value"
                                       stroke="#069707" strokeWidth={3} strokeOpacity={1} />
-
                             </>
                         )}
                     </LineChart>

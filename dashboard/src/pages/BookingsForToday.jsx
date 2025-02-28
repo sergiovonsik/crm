@@ -50,15 +50,15 @@ function BookingsForToday() {
             <Sidebar />
             <div className="main-content">
                 <div className="inline-elements">
-                    <div className="inner-container">
+                    <div>
                         <div  className="reset-button" onClick={() => resetClosedBoxes()}>
                             Reset
                         </div>
-                    </div><div className="inner-container">
+                    </div><div className="box-counting-container">
                         <div className="title">Pending bookings for today:</div>
                         <div className="number-box">{bookings.length}</div>
                     </div>
-                    <div className="inner-container">
+                    <div className="box-counting-container">
                         <div className="title">Already checked:</div>
                         <div className="number-box">{numberOfClosedItems}</div>
                     </div>
