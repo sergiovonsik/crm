@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import Sidebar from "../components/Sidebar";
-import SelectedUserData from "../components/SelectedUserData.jsx";
-import AssignmentForm from "../components/AssignmentForm.jsx";
-import TakeAPassForm from "../components/TakeAPassForm.jsx";
+import SelectedUserData from "../components/SelectedUserData";
+import AssignmentForm from "../components/AssignmentForm";
+import TakeAPassForm from "../components/TakeAPassForm";
 import "../styles/SearchUser.css";
 import api from "../api.js";
 

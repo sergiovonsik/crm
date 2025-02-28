@@ -31,7 +31,7 @@ function BuyPasses() {
     const fillMPButtonData = (data) => {
         setPrice(data.price);
         setTypeOfService(data.type_of_service);
-        setPassAmount(data.pass_amount);  
+        setPassAmount(data.pass_amount);
         setSubscriptionIsSelected(true);
     };
 

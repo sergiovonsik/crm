@@ -154,15 +154,20 @@ button:disabled {
 
 .inline-elements {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%; /* Ensure it takes the full width */
+    width: fit-content;
+    height: fit-content;
+    text-align: center;
+    margin: 0 auto;
 }
 
 
 .inner-container {
+    flex: 1; /* Each takes half the space */
     display: flex;
-    align-items: center; /* Align vertically */
+    flex-direction: column; /* Stack child containers vertically */
+    gap: 10px; /* Optional: space between child containers */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .number-box {

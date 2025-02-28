@@ -40,7 +40,7 @@ function SelectedUserData({selectedUserData, paymentTickets, bookingFiles, setTi
             </div>
         </div>
         <div>
-            <div className="inline-elements">
+            <div>
                 <h2 className="titles">Tickets:</h2>
 
                 <button className="filterButton" onClick={() => setTicketsFilter(!ticketsFilter)}>
@@ -62,7 +62,7 @@ function SelectedUserData({selectedUserData, paymentTickets, bookingFiles, setTi
             )}
         </div>
         <div>
-            <div className="inline-elements">
+            <div >
                 <h2 className="titles">Bookings:</h2>
 
                 <button className="filterButton" onClick={() => setBookingFilter(!bookingFilter)}>
