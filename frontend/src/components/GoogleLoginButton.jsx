@@ -8,7 +8,7 @@ import {apiUrl} from "../api"
 
 function GoogleLoginButton() {
   const navigate = useNavigate();
-  const route =`${apiUrl}/api/user/AuthGoogle/auth/`;
+  const route =`${apiUrl}/api/user/auth/google/`;
 
 
   const handleSubmit = async (googleCredential) => {
