@@ -4,7 +4,7 @@ import api from "../api.js";
 import PropTypes from 'prop-types';
 import {useState} from "react";
 
-function TakeAPassForm({ selectedUserData, setSelectedUserData }) {
+function DiscountPassForm({ selectedUserData, setSelectedUserData }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
@@ -66,7 +66,7 @@ function TakeAPassForm({ selectedUserData, setSelectedUserData }) {
     );
 }
 
-TakeAPassForm.propTypes = {
+DiscountPassForm.propTypes = {
     selectedUserData: PropTypes.shape({
         username: PropTypes.string,
         date_joined: PropTypes.string,
@@ -75,4 +75,4 @@ TakeAPassForm.propTypes = {
     setSelectedUserData: PropTypes.func.isRequired,
 };
 
-export default TakeAPassForm;
+export default DiscountPassForm;

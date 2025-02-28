@@ -63,10 +63,13 @@ function BuyPasses() {
                         {formSelectionData.classes ? (
                             formSelectionData.classes.map((data) => {
                                 data.type_of_service = "classes";
-                                return (<div className="child" key={data.id} onClick={() => fillMPButtonData(data)}
-                                >
-                                            <Price data={data}/>
-                                       </div>);
+                                return (
+                                    <div className="child"
+                                             key={data.id}
+                                             onClick={() => fillMPButtonData(data)}>
+                                        <Price data={data}/>
+                                    </div>
+                                );
                             })
                         ) : (
                             <LoadingIndicator/>
@@ -77,10 +80,13 @@ function BuyPasses() {
                         {formSelectionData.free_climbing ? (
                             formSelectionData.free_climbing.map((data) => {
                                 data.type_of_service = "free_climbing";
-                                return (<div className="child" key={data.id} onClick={() => fillMPButtonData(data)}
-                                >
+                                return (
+                                    <div className="child"
+                                             key={data.id}
+                                             onClick={() => fillMPButtonData(data)}>
                                     <Price data={data}/>
-                                </div>);
+                                    </div>
+                                );
                             })
                         ) : (
                             <LoadingIndicator/>

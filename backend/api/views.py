@@ -599,7 +599,7 @@ class MercadoPagoSuccesHook(APIView):
 
 
 class AdminSetPrices(APIView):
-    permission_classes = [IsAuthenticated, isAdmin]
+    permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
 
 
     def get(self, request, *args, **kwargs):

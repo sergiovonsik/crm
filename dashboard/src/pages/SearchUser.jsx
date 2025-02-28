@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import Sidebar from "../components/Sidebar";
 import SelectedUserData from "../components/SelectedUserData";
 import AssignmentForm from "../components/AssignmentForm";
-import TakeAPassForm from "../components/TakeAPassForm";
+import DiscountPassForm from "../components/DiscountPassForm";
 import "../styles/SearchUser.css";
 import api from "../api.js";
 
@@ -135,7 +135,7 @@ function SearchUser() {
             </div>
             <div className="inner-container">
 
-                < TakeAPassForm selectedUserData={selectedUserData} setSelectedUserData={setSelectedUserData}/>
+                < DiscountPassForm selectedUserData={selectedUserData} setSelectedUserData={setSelectedUserData}/>
             </div>
 
         </div>
