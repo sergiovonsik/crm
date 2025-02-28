@@ -580,9 +580,11 @@ class MercadoPagoSuccesHook(APIView):
 
                 print("TICKET DATA", ticket)
                 return Response(status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "The payment hasn't been registered yet"}, status=status.HTTP_200_OK)
 
         else:
-            print(f"request data was not for payment, {request.data}")
+            print(f"request data was not for preference payments, {request.data}")
             return Response(status=status.HTTP_202_ACCEPTED)
 
 
@@ -641,3 +643,16 @@ class AdminShowAllPrices(ModelViewSet):
     queryset = MPPassPrice.objects.all()
     serializer_class = MPSerializer
     permission_classes = [IsAuthenticated, isAdmin]
+
+
+# WORKER API WORK DONT FELL SLEEP
+
+
+class SayHi(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return Response({"greeting": "What's up bruh"}, status=status.HTTP_200_OK)
+        except (ValueError, TypeError) as e:
+            return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
