@@ -21,6 +21,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Third-party library imports
 import mercadopago
+import requests
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from allauth.socialaccount.models import SocialAccount
@@ -534,7 +535,7 @@ class MercadoPagoTicket(ModelViewSet):
         purchase_id = preference.get("id")
 
         if init_point:
-            ticket_data.update({"order_id": purchase_id})
+            ticket_data["order_id"] = purchase_id
 
             ticket_serializer = self.get_serializer(data=ticket_data)
             if ticket_serializer.is_valid():
@@ -550,90 +551,39 @@ class MercadoPagoSuccesHook(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        merchant_order_url = request.data.get("data", {}).get("id")
+        topic = request.data.get("data", {}).get("topic")
 
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
-        merchant_order_id = request.data.get("data", {}).get("id")
+        if topic == "merchant_order":
 
-        pprint({"request.data":request.data})
+            response = requests.get(merchant_order_url,
+                                    headers={"Authorization": f"Bearer {os.environ.get('MP_ACCESS_TOKEN')}"})
+            order_data = response.json()
+            pprint(order_data)
 
-        if not merchant_order_id:
-            return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
+            if order_data.get('order_status') == 'paid':
+                print(" Ticket paid! $: " + str(order_data.get("paid_amount")))
 
+                try:
+                    ticket = PaymentTicket.objects.get(order_id=order_data.get('preference_id'))
+                except PaymentTicket.DoesNotExist:
+                    return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        order_data_raw = sdk.merchant_order().get(merchant_order_id)
-        order_data = order_data_raw.get("response", {})
+                ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
 
-        pprint(dict(MerchantOrderdata=order_data))
+                if ticket.left_to_pay <= 0:
+                    ticket.left_to_pay = 0
+                    ticket.status = "in_use"
+                    ticket.is_expired = False
 
-        if order_data.get('order_status') == 'paid':
-            print(" Ticket paid! $: " + str(order_data.get("paid_amount")))
+                ticket.save()
 
-            try:
-                ticket = PaymentTicket.objects.get(order_id=merchant_order_id)
-            except PaymentTicket.DoesNotExist:
-                return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
+                print("TICKET DATA", ticket)
+                return Response(status=status.HTTP_200_OK)
 
-            ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
-
-            if ticket.left_to_pay <= 0:
-                ticket.left_to_pay = 0
-                ticket.status = "in_use"
-                ticket.is_expired = False
-
-            ticket.save()
-
-            print("TICKET DATA", ticket)
-            return Response(status=status.HTTP_200_OK)
-
-        return Response(status=status.HTTP_202_ACCEPTED)
-
-
-class MercadoPagoSuccesHookUrlData(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, id, topic):
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
-        merchant_order_id = id
-
-        pprint(request.data)
-
-        if not merchant_order_id:
-            return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
-
-        def get_merchant_order():
-            return sdk.merchant_order().get(merchant_order_id)
-
-        def get_ticket(order_id):
-            return PaymentTicket.objects.get(order_id=order_id)
-
-        order_data_raw = get_merchant_order()
-        order_data = order_data_raw.get("response", {})
-
-        pprint('Merchant Order')
-        pprint(order_data)
-
-        if order_data.get('order_status') == 'paid':
-            print("Ticket paid!")
-            print("$: " + str(order_data.get("paid_amount")))
-
-            try:
-                ticket = get_ticket(merchant_order_id)
-            except PaymentTicket.DoesNotExist:
-                return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
-
-            ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
-
-            if ticket.left_to_pay <= 0:
-                ticket.left_to_pay = 0
-                ticket.status = "in_use"
-                ticket.is_expired = False
-
-            ticket.save()
-
-            print("TICKET DATA", ticket)
-            return Response(status=status.HTTP_200_OK)
-
-        return Response(status=status.HTTP_202_ACCEPTED)
+        else:
+            print(f"request data was not for payment, {request.data}")
+            return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class AdminSetPrices(APIView):
