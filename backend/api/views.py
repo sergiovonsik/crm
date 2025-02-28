@@ -485,7 +485,7 @@ class MercadoPagoTicket(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCESs_TOKEN'))
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
 
         ticket_data = {
             "type_of_service": str(request.data.get("type_of_service")),
@@ -556,7 +556,7 @@ class MercadoPagoSuccesHook(APIView):
     def post(self, request, *args, **kwargs):
         pprint(request.data)
 
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCESs_TOKEN'))
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
         merchant_order_id = request.data.get("data", {}).get("id")
 
         if not merchant_order_id:

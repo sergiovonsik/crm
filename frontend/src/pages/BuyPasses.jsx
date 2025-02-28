@@ -45,9 +45,7 @@ function BuyPasses() {
                     {subscriptionIsSelected && (
                         <div className="summary">
                             <p>
-                                You have selected {passAmount}
-                                {typeOfService.replace('_', ' ')} pass
-                                {passAmount > 1 ? 'es' : ''} for ${price}.
+                                You have selected: {passAmount} {typeOfService.replace('_', ' ')} pass for ${price}.
                             </p>
                             <MercadoPagoButton
                                 type_of_service={typeOfService}
