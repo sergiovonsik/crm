@@ -17,10 +17,12 @@ urlpatterns = [
     path("user/book_pass/", UserBookingViewSet.as_view({'post': 'create'}),
          name="user-book-passes"),
 
-    # mercadoPago
+    # MERCADO PAGO
     path("mercadopago/pay/", MercadoPagoTicket.as_view({'post': 'create'}),
          name="mercadopago"),
     path("mercadopago/succes-hook/", MercadoPagoSuccesHook.as_view(),
+         name='webhook'),
+    path("mercadopago/succes-hook/<int:id><str:topic>", MercadoPagoSuccesHook.as_view(),
          name='webhook'),
     path("mercadopago/set_price/<int:priceId>/", AdminSetPrices.as_view(),
          name='delete_price'),
@@ -30,7 +32,7 @@ urlpatterns = [
     path("mercadopago/show_all_prices/", AdminShowAllPrices.as_view({'get': 'list'}),
          name='set_price'),
 
-    # adminActions
+    # ADMIN ACTIONS
     path("userAdmin/BookingChart/", AdminPassesChartData.as_view(),
          name="booking-chart-data"),
     path("userAdmin/TicketChart/", AdminTicketsChartData.as_view(),

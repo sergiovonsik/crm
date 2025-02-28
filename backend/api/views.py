@@ -27,8 +27,6 @@ from allauth.socialaccount.models import SocialAccount
 from collections import defaultdict
 from itertools import groupby
 
-
-
 # Project-specific imports
 from datetime import timedelta
 from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
@@ -36,10 +34,8 @@ from .models import PaymentTicket, Client
 from .permissions import *
 from .serializers import *
 
-
 # Initialize environment variables
 load_dotenv()  # Load variables from .env
-
 
 # Get the MercadoPago Access Token
 
@@ -554,10 +550,53 @@ class MercadoPagoSuccesHook(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        pprint(request.data)
 
         sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
         merchant_order_id = request.data.get("data", {}).get("id")
+
+        pprint("request.data" + request.data)
+
+        if not merchant_order_id:
+            return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        order_data_raw = sdk.merchant_order().get(merchant_order_id)
+        order_data = order_data_raw.get("response", {})
+
+        pprint('Merchant Order data \n' + order_data)
+
+        if order_data.get('order_status') == 'paid':
+            print(" Ticket paid! $: " + str(order_data.get("paid_amount")))
+
+            try:
+                ticket = PaymentTicket.objects.get(order_id=merchant_order_id)
+            except PaymentTicket.DoesNotExist:
+                return Response({"error": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            ticket.left_to_pay -= float(order_data.get("paid_amount", 0))
+
+            if ticket.left_to_pay <= 0:
+                ticket.left_to_pay = 0
+                ticket.status = "in_use"
+                ticket.is_expired = False
+
+            ticket.save()
+
+            print("TICKET DATA", ticket)
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_202_ACCEPTED)
+
+
+class MercadoPagoSuccesHookUrlData(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, id, topic):
+
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
+        merchant_order_id = id
+
+        pprint(request.data)
 
         if not merchant_order_id:
             return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -600,7 +639,6 @@ class MercadoPagoSuccesHook(APIView):
 
 class AdminSetPrices(APIView):
     permission_classes = [IsAuthenticated, IsOwnerReadOnlyOrisAdmin]
-
 
     def get(self, request, *args, **kwargs):
         # Get all unique types of service
