@@ -39,7 +39,7 @@ function PriceForm({setExistingPrices}) {
 
     return (
         <div>
-            <div className="title">Assign passes to user:</div>
+            <div className="title">Create new a new subscription:</div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <select {...register("type_of_service", {required: "This field is required"})}>
                     <option value="classes">Classes</option>

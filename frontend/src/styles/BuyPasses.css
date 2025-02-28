@@ -17,9 +17,16 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+.title {
     text-align: center;
-    margin-bottom: 20px;
+    font-size: xxx-large;
+    font-weight: bold;
+}
+
+.sub-title {
+    text-align: center;
+    font-size: xx-large;
+    font-weight: bold;
 }
 
 .form-group {
@@ -96,3 +103,26 @@ button:disabled {
     margin: 20px auto; /* Center the element horizontally */
     font-size: 14px;
 }
+
+
+.prices-container {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.left, .right {
+    flex: 1; /* Each takes half the space */
+    display: flex;
+    flex-direction: column; /* Stack child containers vertically */
+    gap: 10px; /* Optional: space between child containers */
+    padding: 20px;
+    box-sizing: border-box;
+}
+.child {
+    padding: 20px;
+    text-align: center;
+}
+

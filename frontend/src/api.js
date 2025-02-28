@@ -44,7 +44,7 @@ api.interceptors.response.use(
             console.error("No refresh token available. Redirecting to login.");
             localStorage.removeItem(ACCESS_TOKEN);
             localStorage.removeItem(REFRESH_TOKEN);
-            window.location.href = "/login"; // Redirigir al login
+            window.location.href = "/login";
             return Promise.reject(error);
           }
 

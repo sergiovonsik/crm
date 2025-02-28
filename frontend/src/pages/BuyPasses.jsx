@@ -1,86 +1,94 @@
 import { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
 import "../styles/BuyPasses.css";
+import api from "../api.js";
+import Sidebar from "../components/Sidebar";
+import Price from "../components/Price.jsx";
+import LoadingIndicator from "../components/LoadingIndicator.jsx";
 import MercadoPagoButton from "../components/MercadoPagoButton.jsx";
 
-/*const passes = {
-    classes:[{amount:4, price:40}, {amount:8, price:80}, {amount:16, price:120}],
-    free_climb:[{amount:4, price:40}, {amount:8, price:80}, {amount:16, price:120}]
-};*/
 function BuyPasses() {
-    const [activityType, setActivityType] = useState('');
+    const [typeOfService, setTypeOfService] = useState('');
     const [passAmount, setPassAmount] = useState('');
     const [price, setPrice] = useState(null);
-
+    const [formSelectionData, setFormSelectionData] = useState({});
+    const [subscriptionIsSelected, setSubscriptionIsSelected] = useState(false);
 
     useEffect(() => {
-        handleSelectionChange();
-    }, )
+        getPricesData();
+    }, []);
 
-    const pricing = {
-        classes: { 4: 50, 8: 90, 16: 160 },
-        free_climbing: { 4: 60, 8: 110, 16: 200 },
-    };
-
-    const handleSelectionChange = () => {
-        if (activityType && passAmount) {
-            const selectedPrice = pricing[activityType]?.[passAmount] || 0;
-            setPrice(selectedPrice);
-        } else {
-            setPrice(null);
+    const getPricesData = async () => {
+        try {
+            const res = await api.get("api/mercadopago/set_price/");
+            console.log(res.data);
+            setFormSelectionData(res.data.processed_data); // Corregido
+        } catch (error) {
+            const errorMessage = "Booking failed: " + (error.response?.data?.error || error.message);
+            console.log(errorMessage);
         }
     };
 
+    const fillMPButtonData = (data) => {
+        setPrice(data.price);
+        setTypeOfService(data.type_of_service);
+        setPassAmount(data.pass_amount);  
+        setSubscriptionIsSelected(true);
+    };
+
+
     return (
         <div>
-            <Sidebar/>
+            <Sidebar />
             <div className="main-content">
                 <div className="dashboard">
-                    <h2>Select Your Activity</h2>
-                    <div className="form-group">
-                        <label htmlFor="activityType">Activity Type:</label>
-                        <select
-                            id="activityType"
-                            value={activityType}
-                            onChange={(e) => {
-                                setActivityType(e.target.value);
-                                handleSelectionChange();
-                            }}
-                        >
-                            <option value="">--Select Activity--</option>
-                            <option value="classes">Classes</option>
-                            <option value="free_climbing">Free Climbing</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="passAmount">Number of Passes:</label>
-                        <select
-                            id="passAmount"
-                            value={passAmount}
-                            onChange={(e) => {
-                                setPassAmount(e.target.value);
-                                handleSelectionChange();
-                            }}
-                        >
-                            <option value="">--Select Passes--</option>
-                            <option value="4">4</option>
-                            <option value="8">8</option>
-                            <option value="16">16</option>
-                        </select>
-                    </div>
-                    {price !== null && (
+                    <div className='title'>Select Your Subscription</div>
+                    {subscriptionIsSelected && (
                         <div className="summary">
                             <p>
-                                You have selected {passAmount} {activityType.replace('_', ' ')} pass
+                                You have selected {passAmount}
+                                {typeOfService.replace('_', ' ')} pass
                                 {passAmount > 1 ? 'es' : ''} for ${price}.
                             </p>
                             <MercadoPagoButton
-                                type_of_service={activityType}
+                                type_of_service={typeOfService}
                                 amount_of_uses={passAmount}
-                                price={price.toString()}
+                                price={price?.toString()}
                             />
                         </div>
                     )}
+                </div>
+                <div className="prices-container">
+                    <div className="left">
+                        <div className="sub-title"> Buy classes</div>
+                        {formSelectionData.classes ? (
+                            formSelectionData.classes.map((data) => {
+                                data.type_of_service = "classes";
+                                return (<div className="child" key={data.id} onClick={() => fillMPButtonData(data)}
+                                >
+                                            <Price data={data}/>
+                                       </div>);
+                            })
+                        ) : (
+                            <LoadingIndicator/>
+                        )}
+                    </div>
+                    <div className="right">
+                        <div className="sub-title"> Buy free climb passes</div>
+                        {formSelectionData.free_climbing ? (
+                            formSelectionData.free_climbing.map((data) => {
+                                data.type_of_service = "free_climbing";
+                                return (<div className="child" key={data.id} onClick={() => fillMPButtonData(data)}
+                                >
+                                    <Price data={data}/>
+                                </div>);
+                            })
+                        ) : (
+                            <LoadingIndicator/>
+                        )}
+
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -88,4 +96,3 @@ function BuyPasses() {
 }
 
 export default BuyPasses;
-

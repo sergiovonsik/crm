@@ -2,6 +2,7 @@
 import os
 import asyncio
 from pprint import pprint
+from dotenv import load_dotenv
 
 # Django imports
 from django.contrib.auth import get_user_model
@@ -23,6 +24,10 @@ import mercadopago
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from allauth.socialaccount.models import SocialAccount
+from collections import defaultdict
+from itertools import groupby
+
+
 
 # Project-specific imports
 from datetime import timedelta
@@ -30,6 +35,14 @@ from backend.settings import SOCIAL_AUTH_GOOGLE_CLIENT_ID
 from .models import PaymentTicket, Client
 from .permissions import *
 from .serializers import *
+
+
+# Initialize environment variables
+load_dotenv()  # Load variables from .env
+
+
+# Get the MercadoPago Access Token
+
 
 User = get_user_model()
 
@@ -472,7 +485,7 @@ class MercadoPagoTicket(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCESs_TOKEN'))
 
         ticket_data = {
             "type_of_service": str(request.data.get("type_of_service")),
@@ -543,7 +556,7 @@ class MercadoPagoSuccesHook(APIView):
     def post(self, request, *args, **kwargs):
         pprint(request.data)
 
-        sdk = mercadopago.SDK(os.environ.get('MP_ACCES_TOKEN'))
+        sdk = mercadopago.SDK(os.environ.get('MP_ACCESs_TOKEN'))
         merchant_order_id = request.data.get("data", {}).get("id")
 
         if not merchant_order_id:
@@ -588,9 +601,21 @@ class MercadoPagoSuccesHook(APIView):
 class AdminSetPrices(APIView):
     permission_classes = [IsAuthenticated, isAdmin]
 
+
+    def get(self, request, *args, **kwargs):
+        # Get all unique types of service
+        service_types = MPPassPrice.objects.values_list("type_of_service", flat=True).distinct()
+
+        # Query each type separately and store results in a dictionary
+        processed_data = {
+            service: list(MPPassPrice.objects.filter(type_of_service=service).values("pass_amount", "price", "id"))
+            for service in service_types
+        }
+
+        return Response({"processed_data": processed_data}, status=200)
+
     def post(self, request, *args, **kwargs):
         try:
-            pprint(request.data)
             price = int(request.data.get('price'))
             pass_amount = int(request.data.get('pass_amount'))
             type_of_service = request.data.get('type_of_service')
@@ -607,10 +632,6 @@ class AdminSetPrices(APIView):
             else:
                 print(serialized_data.errors)
                 return Response({serialized_data.errors}, status=status.HTTP_403_FORBIDDEN)
-
-
-
-
         except (ValueError, TypeError) as e:
             return Response({"error": "Invalid input or format", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
