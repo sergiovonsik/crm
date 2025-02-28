@@ -554,7 +554,7 @@ class MercadoPagoSuccesHook(APIView):
         sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
         merchant_order_id = request.data.get("data", {}).get("id")
 
-        pprint("request.data" + request.data)
+        pprint({"request.data":request.data})
 
         if not merchant_order_id:
             return Response({"error": "No order ID found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -563,7 +563,7 @@ class MercadoPagoSuccesHook(APIView):
         order_data_raw = sdk.merchant_order().get(merchant_order_id)
         order_data = order_data_raw.get("response", {})
 
-        pprint('Merchant Order data \n' + order_data)
+        pprint(dict(MerchantOrderdata=order_data))
 
         if order_data.get('order_status') == 'paid':
             print(" Ticket paid! $: " + str(order_data.get("paid_amount")))
@@ -592,7 +592,6 @@ class MercadoPagoSuccesHookUrlData(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, id, topic):
-
         sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN'))
         merchant_order_id = id
 
