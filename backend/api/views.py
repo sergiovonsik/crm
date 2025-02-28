@@ -21,7 +21,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Third-party library imports
 import mercadopago
-import requests
+import requests as urlRequest
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from allauth.socialaccount.models import SocialAccount
@@ -556,8 +556,8 @@ class MercadoPagoSuccesHook(APIView):
 
         if topic == "merchant_order":
 
-            response = requests.get(merchant_order_url,
-                                    headers={"Authorization": f"Bearer {os.environ.get('MP_ACCESS_TOKEN')}"})
+            response = urlRequest.get(merchant_order_url,
+                                      headers={"Authorization": f"Bearer {os.environ.get('MP_ACCESS_TOKEN')}"})
             order_data = response.json()
             pprint(order_data)
 
