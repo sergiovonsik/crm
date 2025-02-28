@@ -36,9 +36,9 @@ class PaymentTicket(models.Model):
 
     order_id = models.CharField(max_length=100, default="Null", blank=False)
 
-    expire_time = models.DateField(default=get_default_date_30_days, editable=False, blank=True, null=True)
+    expire_time = models.DateField(default=get_default_date_30_days, blank=False, null=False )
 
-    is_expired = models.BooleanField(default=False)
+    is_expired = models.BooleanField(default=False, editable=True)
 
     status = models.CharField(
         max_length=30,
