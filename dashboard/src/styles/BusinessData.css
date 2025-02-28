@@ -35,7 +35,7 @@ div {
   flex-wrap: wrap; /* Wraps if screen is too small */
   flex-direction: row;
   justify-content: center;
-  gap: 20px; /* Space between charts */
+  gap: 3vw; /* Space between charts */
 }
 
 .donut-box {

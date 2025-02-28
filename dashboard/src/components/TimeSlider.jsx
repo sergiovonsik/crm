@@ -4,12 +4,18 @@ import "../styles/RangeSlider.css"; // Import CSS
 import RangeSlider from 'react-range-slider-input';
 import 'react-range-slider-input/dist/style.css';
 
-function TimeSlider({ rangeOfDates, setRangeOfDates }) {
+function TimeSlider({ rangeOfDates, setRangeOfDates, resetParameters }) {
     return (
 
         <div className="component-container">
-
-            <h2> Set the range of time</h2>
+            <div className="refresh-inline-elements">
+                <div className="refresh-inner-container">
+                    <h2> Set the range of time</h2>
+                </div>
+                <div className="refresh-inner-container">
+                    <div className="reset-button" onClick={() => resetParameters()}> Refresh parameters</div>
+                </div>
+            </div>
 
             <div className="slider-wrapper">
             {/* Button on the left
@@ -56,6 +62,7 @@ function TimeSlider({ rangeOfDates, setRangeOfDates }) {
 TimeSlider.propTypes = {
     rangeOfDates: PropTypes.arrayOf(PropTypes.number).isRequired,
     setRangeOfDates: PropTypes.func.isRequired,
+    resetParameters: PropTypes.func.isRequired,
 };
 
 export default TimeSlider;

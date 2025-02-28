@@ -58,19 +58,20 @@ button:disabled {
 .reset-button {
     width: 100%;
     padding: 10px;
-    background-color: rgb(248, 199, 10);
+    background-color: rgb(250, 165, 7);
     color: #000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 37px;
+    font-size: 28px;
 }
 .reset-button:hover {
     box-shadow: 0 0 15px 4px rgba(255, 196, 0, 0.87);
+
 }
 
 .reset-button:active {
-    background-color: rgb(179, 147, 17); /* Darker yellow when pressed */
+    background-color: rgb(244, 140, 2); /* Darker yellow when pressed */
     box-shadow: 0 0 15px 4px rgba(255, 128, 0, 0.87);
     transform: scale(0.95); /* Slightly shrink the button */
 }
@@ -165,6 +166,23 @@ button:disabled {
     flex: 1; /* Each takes half the space */
     display: flex;
     flex-direction: column; /* Stack child containers vertically */
+    gap: 10px; /* Optional: space between child containers */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.refresh-inline-elements {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+    gap: 5vw;
+}
+
+
+.refresh-inner-container {
+    flex: 1; /* Each takes half the space */
     gap: 10px; /* Optional: space between child containers */
     padding: 20px;
     box-sizing: border-box;

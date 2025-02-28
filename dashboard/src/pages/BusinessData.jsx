@@ -16,15 +16,22 @@ function BusinessData() {
     const [typeOfServiceChart, setTypeOfServiceChart] = useState([]);
     const [rangeOfDates, setRangeOfDates] = useState([-30, 0]);
 
-    useEffect(() => {
+    // Function to fetch all charts data
+    const fetchAllChartData = () => {
         const end_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[1]));
         const start_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[0]));
+
         getBookingChartData(end_day, start_day);
         getTicketChartData(end_day, start_day);
         getActiveClientsChartData(end_day, start_day);
         getTypeOfServiceChartData(end_day, start_day);
+    };
 
-    }, [rangeOfDates]);
+    // Run useEffect only on mount
+    useEffect(() => {
+        fetchAllChartData();
+    }, []);
+
 
     const getBookingChartData = async (end_day, start_day) => {
         try {
@@ -89,7 +96,9 @@ function BusinessData() {
         <div>
             <Sidebar/>
             <div className="main-content">
-                <RangeSlider rangeOfDates={rangeOfDates} setRangeOfDates={setRangeOfDates}/>
+                <RangeSlider rangeOfDates={rangeOfDates}
+                             setRangeOfDates={setRangeOfDates}
+                             resetParameters={fetchAllChartData}/>
                 <h2>Clients Insights</h2>
                 <div className="donut-container">
                     <div className="donut-box">
@@ -100,7 +109,7 @@ function BusinessData() {
                     <div className="donut-box">
                         <DonutChartComponent title={'Active Clients'}
                                              data={activeClientsChart}
-                                             colors={["#ffde04", "#c80a0a", "#ffdf04", "#c80a18"]}/>
+                                             colors={["#20568c", "#f85b07", "#bf1d05", "#690fc8"]}/>
                     </div>
                 </div>
                 <LineChartComponent title={'Bookings'} chartData={bookingChart} lineColor={"#f1c40f"}/>
