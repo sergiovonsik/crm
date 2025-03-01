@@ -9,7 +9,7 @@ import MercadoPagoButton from "../components/MercadoPagoButton.jsx";
 function BuyPasses() {
     const [typeOfService, setTypeOfService] = useState('');
     const [passAmount, setPassAmount] = useState('');
-    const [price, setPrice] = useState(null);
+    const [price, setPrice] = useState("");
     const [formSelectionData, setFormSelectionData] = useState({});
     const [subscriptionIsSelected, setSubscriptionIsSelected] = useState(false);
 
@@ -47,13 +47,17 @@ function BuyPasses() {
                             <p>
                                 You have selected: {passAmount} {typeOfService.replace('_', ' ')} pass for ${price}.
                             </p>
-                            <MercadoPagoButton
-                                type_of_service={typeOfService}
-                                amount_of_uses={passAmount}
-                                price={price?.toString()}
-                            />
+                            {price && (
+                                <MercadoPagoButton
+                                    key={`${typeOfService}-${passAmount}-${price}`} // Force re-render when these values change
+                                    type_of_service={typeOfService}
+                                    amount_of_uses={passAmount}
+                                    price={price.toString()}
+                                />
+                            )}
                         </div>
                     )}
+
                 </div>
                 <div className="prices-container">
                     <div className="left">

@@ -33,12 +33,12 @@ function SearchUser() {
             console.log(data);
 
             let booking_tickets = data.bookings;
-            booking_tickets.sort((a, b) => new Date(a.date) - new Date(b.date));
+            booking_tickets.sort((a, b) => (b.id) - (a.id));
             sessionStorage.setItem("bookingFiles", JSON.stringify(booking_tickets)); // Save to sessionStorage
             setBookingFiles(booking_tickets || []);
 
             let payment_ticket = data.payment_ticket
-            payment_ticket.sort((a, b) => new Date(a.expire_time) - new Date(b.expire_time));
+            payment_ticket.sort((a, b) => (b.id) - (a.id));
             sessionStorage.setItem("payment_ticket", JSON.stringify(payment_ticket)); // Save to sessionStorage
             setPaymentTickets(payment_ticket || []);
 

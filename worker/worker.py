@@ -11,6 +11,7 @@ def send_request():
         print(f"Response ({response.status_code}): {response.text}")
     except requests.RequestException as e:
         print(f"Request failed: {e}")
+        print(time.now())
 
 
 # Schedule the request every 10 minutes
