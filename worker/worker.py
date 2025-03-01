@@ -14,8 +14,9 @@ def send_request():
 
 
 # Schedule the request every 10 minutes
-schedule.every(1).minutes.do(send_request)
+schedule.every(11).minutes.do(send_request)
 
 while True:
+    print("worker initialized")
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(60*11)
