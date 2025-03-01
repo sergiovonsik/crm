@@ -37,7 +37,7 @@ const Booking = ({booking}) => {
             <span><strong>Date:</strong> {date}</span>
             <span><strong>Ticket:</strong> {ticket}</span>
             <span><strong>Activity:</strong> {type_of_service}</span>
-            <span><strong>Created At:</strong> {new Date(created_at).toLocaleString()}</span>
+            <span><strong>Created At:</strong> {new Date(created_at).toLocaleDateString('en-GB')}</span>
         </div>
     );
 };

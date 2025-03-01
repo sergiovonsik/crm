@@ -1,78 +1,93 @@
+:root {
+    --border-radius: 0.625rem; /* 10px */
+    --padding: 1.25rem; /* 20px */
+    --margin: 0.625rem 0; /* 10px 0 */
+    --font-size: 1.25rem; /* 20px */
+    --gap: 2vw;
+    --color-light: #ddd;
+    --color-dark: #222;
+    --color-white: #fff;
+    --color-pending: #ffb804;
+    --color-used: #c0392b;
+    --color-hover-shadow: rgba(255, 196, 0, 0.82);
+    --scale-active: 0.95;
+}
+
 .booking {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 20px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 2px solid;
-    font-size: 20px;
-    background-color: #222; /* Dark background */
+    padding: var(--padding);
+    margin: var(--margin);
+    border-radius: var(--border-radius);
+    border: 0.125rem solid; /* 2px */
+    font-size: var(--font-size);
+    background-color: var(--color-dark);
     font-family: Arial, sans-serif;
-    color: #ddd; /* Light text for readability */
-    gap: 2vw;
+    color: var(--color-light);
+    gap: var(--gap);
+    flex-wrap: wrap; /* Allow content to expand */
 }
 
 .booking span {
     text-align: center;
-    white-space: nowrap;
+    white-space: normal; /* Allow text to wrap */
 }
 
 .booking strong {
-    color: #fff; /* White text for contrast */
+    color: var(--color-white);
 }
 
 .booking.pending {
-    border-color: #ffb804; /* Grey border */
-    background-color: #262629; /* Dark grey background */
+    border-color: var(--color-pending);
+    background-color: #262629;
 }
 
 .booking.pending:active {
-    background-color: rgb(129, 124, 124); /* Darker yellow when pressed */
-    box-shadow: 0 0 15px 4px rgb(248, 199, 10);
-    transform: scale(0.95); /* Slightly shrink the button */
+    background-color: #816a04;
+    box-shadow: 0 0 0.9375rem 0.25rem var(--color-pending); /* 15px 4px */
+    transform: scale(var(--scale-active));
 }
 
 .booking.pending:hover {
-    box-shadow: 0 0 10px 2px rgba(255, 196, 0, 0.82);
+    box-shadow: 0 0 0.625rem 0.125rem var(--color-hover-shadow); /* 10px 2px */
 }
 
 .booking.used {
-    border-color: #c0392b; /* Red border */
-    background-color: #3d1e1e; /* Dark red background */
+    border-color: var(--color-used);
+    background-color: #3d1e1e;
 }
 
 .booking.used:active {
-    background-color: rgb(182, 79, 79); /* Darker yellow when pressed */
-    box-shadow: 0 0 15px 4px rgba(255, 47, 0, 0.87);
-    transform: scale(0.95); /* Slightly shrink the button */
+    background-color: #b64f4f;
+    box-shadow: 0 0 0.9375rem 0.25rem rgba(255, 47, 0, 0.87);
+    transform: scale(var(--scale-active));
 }
 
 .booking.used:hover {
-    box-shadow: 0 0 10px 2px rgb(175, 5, 5);
+    box-shadow: 0 0 0.625rem 0.125rem rgb(175, 5, 5);
 }
 
 .error-message {
-    border-color: #c0392b; /* Red border */
-    background-color: #3d1e1e; /* Dark red background */
-    color: white;
+    border-color: var(--color-used);
+    background-color: #3d1e1e;
+    color: var(--color-white);
     text-align: center;
-    padding: 10px;
-    font-size: 20px;
+    padding: 0.625rem; /* 10px */
+    font-size: var(--font-size);
 }
-
 
 .status {
     font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
+    padding: 0.3125rem 0.625rem; /* 5px 10px */
+    border-radius: 0.3125rem; /* 5px */
+    color: var(--color-white);
 }
 
 .pending .status {
-    background-color: #bdc3c7; /* Grey status */
+    background-color: #bdc3c7;
 }
 
 .used .status {
-    background-color: #c0392b; /* Red status */
+    background-color: var(--color-used);
 }

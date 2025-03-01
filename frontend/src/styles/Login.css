@@ -1,19 +1,19 @@
 .container {
-    background-color: #1e1e1e; /* Light grey background */
-    padding: 20px;
-    border-radius: 10px; /* Slightly rounded corners */
-    width: fit-content; /* Adjust width to content */
-    margin: auto; /* Centering */
+    background-color: #1e1e1e;
+    padding: 1.25rem;
+    border-radius: 0.625rem;
+    width: max-content;
+    margin: auto;
     text-align: center;
 }
 
 .register-button {
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     color: #ffffff;
     transition: color 0.3s ease-in-out;
 }
 
 .register-button:hover {
-    color: #009dff; /* Turns blue when hovered */
+    color: #009dff;
 }
