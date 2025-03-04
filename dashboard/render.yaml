@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: admin-site-2uli.onrender.com
+    name: admin-site
     runtime: static
     routes:
       - source: /(.*)
