@@ -18,7 +18,7 @@ function BusinessData() {
 
     // Function to fetch all charts data
     const fetchAllChartData = () => {
-        const end_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[1]));
+        const end_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[1] -1));
         const start_day = new Date(new Date().setDate(new Date().getDate() + rangeOfDates[0]));
 
         getBookingChartData(end_day, start_day);

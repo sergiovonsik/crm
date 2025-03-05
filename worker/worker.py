@@ -18,6 +18,6 @@ def send_request():
 # Schedule the request every 10 minutes
 schedule.every(11).minutes.do(send_request)
 
-while True: 
+while True:
     schedule.run_pending()
     time.sleep(60*6)
