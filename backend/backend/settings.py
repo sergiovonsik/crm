@@ -123,11 +123,16 @@ SIMPLE_JWT = {
 
 # Database configuration
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",  # Set to SQLite
-        "NAME": BASE_DIR / "db.sqlite3",  # Path to the SQLite database file
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',  # For local connection, you can use 'localhost' or '127.0.0.1'
+        'PORT': '5432',
     }
 }
+
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
