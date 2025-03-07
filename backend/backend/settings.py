@@ -121,18 +121,18 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-# Database configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': '127.0.0.1',  # For local connection, you can use 'localhost' or '127.0.0.1'
-        'PORT': '5432',
-    }
-}
+import dj_database_url
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default="postgresql://sergio_vonsik:"
+                "XnnO1LHgBLHYxL4XRn2yOv2aGuT6b9ie@"
+                "dpg-cun1h752ng1s739s2tn0-a.oregon-postgres.render.com/"
+                "crm_database_um24",
+        conn_max_age=600,
+        ssl_require=True  # Set to False if SSL is not required
+    )
+}
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
