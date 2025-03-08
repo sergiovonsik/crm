@@ -1,47 +1,66 @@
+/* Ticket Styles */
+
+:root {
+  --valid-color: #27ae60;
+  --valid-bg: #1e3d29;
+  --valid-hover-border: #4dd350;
+  --valid-hover-bg: #297047;
+  --expired-color: #c0392b;
+  --expired-bg: #3d1e1e;
+  --expired-hover-border: #ed2211;
+  --expired-hover-bg: #5c2525;
+  --text-light: #ddd;
+  --text-strong: #fff;
+  --border-radius: 0.625rem;
+  --padding: 0.75rem 1.25rem;
+  --margin: 0.625rem 0;
+  --font-size: 1rem;
+}
+
 .ticket {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem; /* Usa rem en vez de px */
-  margin: 0.625rem 0; /* Equivale a 10px */
-  border-radius: 0.625rem; /* Equivale a 10px */
-  border: 2px solid;
-  font-size: 1rem; /* 16px */
-  background-color: #222; /* Dark background */
+  padding: var(--padding);
+  margin: var(--margin);
+  border-radius: var(--border-radius);
+  border: 0.125rem solid;
+  font-size: var(--font-size);
+  background-color: #222;
   font-family: Arial, sans-serif;
-  color: #ddd; /* Light text for readability */
-  transition: all 0.3s ease-in-out; /* Transiciones suaves */
+  color: var(--text-light);
+  flex-wrap: wrap;
 }
 
 .ticket span {
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .ticket strong {
-  color: #fff; /* White text for contrast */
+  color: var(--text-strong);
 }
 
 .ticket.valid {
-  border-color: #27ae60; /* Green border */
-  background-color: #1e3d29; /* Dark green background */
+  border-color: var(--valid-color);
+  background-color: var(--valid-bg);
 }
 
 .ticket.valid:hover {
   box-shadow: 0 0 0.625rem 0.125rem rgba(59, 172, 36, 0.75);
-  border-color: #4dd350;
-  background-color: #297047;
+  border-color: var(--valid-hover-border);
+  background-color: var(--valid-hover-bg);
 }
 
 .ticket.expired {
-  border-color: #c0392b;
-  background-color: #522222; /* Ajustado para mejor contraste */
+  border-color: var(--expired-color);
+  background-color: var(--expired-bg);
 }
 
 .ticket.expired:hover {
   box-shadow: 0 0 0.625rem 0.125rem rgba(197, 23, 0, 0.75);
-  border-color: #ed2211;
-  background-color: #6d2c2c; /* Más legible */
+  border-color: var(--expired-hover-border);
+  background-color: var(--expired-hover-bg);
 }
 
 .status {
@@ -52,9 +71,9 @@
 }
 
 .valid .status {
-  background-color: #27ae60;
+  background-color: var(--valid-color);
 }
 
 .expired .status {
-  background-color: #c0392b;
+  background-color: var(--expired-color);
 }

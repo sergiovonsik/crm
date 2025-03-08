@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: admin-site
-    runtime: static
-    routes:
-      - source: /(.*)
-        destination: /index.html
