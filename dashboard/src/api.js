@@ -6,8 +6,9 @@ if (import.meta.env.PROD) {
   apiUrl = import.meta.env.VITE_API_BASE_URL_DEPLOY;
   console.log('Running in production mode in apiUrl=' + import.meta.env.VITE_API_BASE_URL_DEPLOY);
 } else {
-  apiUrl = import.meta.env.VITE_API_BASE_URL_LOCAL;
-  console.log('Running in development mode in apiUrl=' + import.meta.env.VITE_API_BASE_URL_LOCAL);
+  //apiUrl = import.meta.env.VITE_API_BASE_URL_LOCAL;
+    apiUrl = import.meta.env.VITE_API_BASE_URL_DEPLOY;
+    console.log('Running in development mode in apiUrl=' + import.meta.env.VITE_API_BASE_URL_LOCAL);
 }
 
 const api = axios.create({

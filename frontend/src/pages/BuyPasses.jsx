@@ -61,7 +61,7 @@ function BuyPasses() {
                 </div>
                 <div className="prices-container">
                     <div className="left">
-                        <div className="sub-title"> Buy classes</div>
+                        <div className="sub-title"> Buy Classes</div>
                         {formSelectionData.classes ? (
                             formSelectionData.classes.map((data) => {
                                 data.type_of_service = "classes";
@@ -78,7 +78,7 @@ function BuyPasses() {
                         )}
                     </div>
                     <div className="right">
-                        <div className="sub-title"> Buy free climb passes</div>
+                        <div className="sub-title"> Buy Free Climbing Passes</div>
                         {formSelectionData.free_climbing ? (
                             formSelectionData.free_climbing.map((data) => {
                                 data.type_of_service = "free_climbing";

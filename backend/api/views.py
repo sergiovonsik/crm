@@ -515,7 +515,7 @@ class MercadoPagoTicket(ModelViewSet):
                 'pending': 'https://www.yahoo.com.ar/',
                 'success': 'https://crm-frontend-ywqp.onrender.com/'
             },
-            "notification_url": 'https://crm-udrl.onrender.com/api/mercadopago/succes-hook/',
+            "notification_url": f"{os.environ.get('URL_DESTINATION_HOOK')}/api/mercadopago/succes-hook/",
         }
 
         async def get_preference():
