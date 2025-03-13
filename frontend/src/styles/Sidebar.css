@@ -13,14 +13,14 @@
 
 .sidebar {
     height: 100vh;
-    width: var(--sidebar-width);
-    background-color: var(--background-dark);
-    color: var(--text-light);
+    width: 15rem; /* Equivalent to 240px (assuming base font-size is 16px) */
+    background-color: #26262b;
+    color: white;
     position: fixed;
     top: 0;
     left: 0;
-    padding: var(--spacing);
-    transition: width var(--transition-speed);
+    padding: 1.25rem; /* 20px */
+    transition: width 0.3s ease-in-out;
     overflow: hidden;
 }
 
